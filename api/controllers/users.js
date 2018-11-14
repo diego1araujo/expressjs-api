@@ -104,7 +104,7 @@ const usersController = {
     },
 
     seed: async (req, res) => {
-
+        await this.generateSeed();
 
         res.status(200).send({
             message: 'User database seeded successfully',
