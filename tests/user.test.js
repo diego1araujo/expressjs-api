@@ -137,7 +137,7 @@ describe('get /users/:id - Show a specific User with invalid id', () => {
 });
 
 describe('get /users/:id - Show a specific User properly', () => {
-    test('It should respond with an success message', async () => {
+    test('It should respond with a User data', async () => {
         let id = process.env.USER_ID;
         let auth = process.env.AUTH;
 
@@ -166,7 +166,7 @@ describe('delete /users/:id - Delete a User without authorization', () => {
 });
 
 describe('delete /users/:id - Delete a User properly', () => {
-    test('It should respond with an success message', async () => {
+    test('It should respond with NO CONTENT status (204)', async () => {
         let id = process.env.USER_ID;
         let auth = process.env.AUTH;
 

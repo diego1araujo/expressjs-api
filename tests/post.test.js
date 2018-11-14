@@ -157,7 +157,7 @@ describe('patch /posts/:id - Update a Post with empty fields', () => {
 });
 
 describe('patch /posts/:id - Update a Post properly', () => {
-    test('It should respond with an success message', async () => {
+    test('It should respond with a success message', async () => {
         let id = process.env.POST_ID;
         let auth = process.env.AUTH;
 
@@ -190,7 +190,7 @@ describe('delete /posts/:id - Delete a Post without authorization', () => {
 });
 
 describe('delete /posts/:id - Delete a Post properly', () => {
-    test('It should respond with a success message', async () => {
+    test('It should respond with NO CONTENT status (204)', async () => {
         let id = process.env.POST_ID;
         let auth = process.env.AUTH;
 
