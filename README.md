@@ -10,5 +10,6 @@
 - [x] Dotenv
 - [x] Bcrypt
 - [x] JWT
+- [x] Faker
 - [x] Jest
 - [x] Supertest

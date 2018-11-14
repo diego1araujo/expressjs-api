@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "SET MONGO_DB=nodejs-api&&nodemon server.js",
-    "test": "SET MONGO_DB=nodejs-api-test&&jest tests"
+    "test": "SET MONGO_DB=nodejs-api-test&&jest tests/"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "morgan": "^1.9.1"
   },
   "devDependencies": {
+    "faker": "^4.1.0",
     "jest": "^23.6.0",
     "nodemon": "^1.18.6",
     "supertest": "^3.3.0"
