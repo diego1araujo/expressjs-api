@@ -1,79 +1,80 @@
 const mongoose = require('mongoose');
+const faker = require('faker');
 
 const Post = require('../models/post');
 
 const postsController = {
-    index: (req, res) => {
-        Post.find()
-            .select('_id title created_at')
-            .exec()
-            .then(results => {
-                res.status(200).send({
-                    count: results.length,
-                    data: results.map(result => {
-                        return {
-                            _id: result._id,
-                            title: result.title,
-                            created_at: result.created_at,
-                            request: {
-                                url: '/posts/' + result._id,
-                            },
-                        }
-                    }),
-                });
-            }).catch(err => {
-                res.status(500).send({
-                    error: err,
-                });
+    index: async (req, res) => {
+        try {
+            const posts = await Post.find().select('_id title created_at');
+
+            res.status(200).send({
+                count: posts.length,
+                data: posts.map(post => {
+                    return {
+                        _id: post._id,
+                        title: post.title,
+                        created_at: post.created_at,
+                        request: {
+                            url: '/posts/' + post._id,
+                        },
+                    }
+                }),
             });
+        } catch (error) {
+            res.status(500).send({
+                error: error,
+            });
+        }
     },
 
-    store: (req, res) => {
-        const post = new Post({
+    store: async (req, res) => {
+        const newPost = new Post({
             title: req.body.title,
             body: req.body.body,
         });
 
-        post.save()
-            .then(result => {
-                res.status(201).send({
-                    message: 'Post created successfully',
-                    data: {
-                        _id: result._id,
-                        title: result.title,
-                        body: result.body,
-                        created_at: result.created_at,
-                        request: {
-                            url: '/posts/' + result._id,
-                        },
+        try {
+            const post = await newPost.save();
+
+            res.status(201).send({
+                message: 'Post created successfully',
+                data: {
+                    _id: post._id,
+                    title: post.title,
+                    body: post.body,
+                    created_at: post.created_at,
+                    request: {
+                        url: '/posts/' + post._id,
                     },
-                });
-            }).catch(err => {
-                res.status(500).json({
-                    error: err,
-                });
+                },
             });
+        } catch (error) {
+            res.status(500).json({
+                error: error,
+            });
+        }
     },
 
-    show: (req, res) => {
-        Post.findById(req.params.id)
-            .exec()
-            .then(result => {
-                if (result) {
-                    res.status(200).json(result);
-                } else {
-                    res.status(404).send({
-                        message: 'No valid ID was found',
-                    });
-                }
-            }).catch(err => {
-                res.status(500).send({
-                    error: err,
+    show: async (req, res) => {
+        try {
+            const post = await Post.findById(req.params.id);
+
+            if (post) {
+                res.status(200).json(post);
+            } else {
+                res.status(404).send({
+                    message: 'No valid ID was found',
                 });
+            }
+        } catch (error) {
+            res.status(500).send({
+                error: error,
             });
+        }
     },
 
-    update: (req, res) => {
+    update: async (req, res) => {
         const updateOps = {};
 
         for (const [key, value] of Object.entries(req.body)) {
@@ -86,49 +87,54 @@ const postsController = {
             });
         }
 
-        Post.updateOne(
-            { _id: req.params.id },
-            { $set: updateOps },
-        ).exec()
-        .then(result => {
+        try {
+            const post = await Post.updateOne({ _id: req.params.id }, { $set: updateOps });
+
             res.status(200).send({
                 message: 'Post updated successfully',
                 request: {
                     url: '/posts/' + req.params.id,
                 },
             });
-        }).catch(err => {
+        } catch (error) {
             res.status(500).send({
-                error: err,
+                error: error,
             });
-        });
-    },
-
-    destroy: (req, res) => {
-        Post.deleteOne({ _id: req.params.id })
-            .exec()
-            .then(result => {
-                res.status(204).send();
-            }).catch(err => {
-                res.status(500).send({
-                    error: err,
-                });
-            });
-    },
-
-    seed: (req, res) => {
-        const posts = [
-            { title: 'Lorem ipsum 01', body: 'Lorem ipsum dolor sit amet 01', },
-            { title: 'Lorem ipsum 02', body: 'Lorem ipsum dolor sit amet 02', },
-            { title: 'Lorem ipsum 03', body: 'Lorem ipsum dolor sit amet 03', },
-            { title: 'Lorem ipsum 04', body: 'Lorem ipsum dolor sit amet 04', },
-            { title: 'Lorem ipsum 05', body: 'Lorem ipsum dolor sit amet 05', },
-        ];
-
-        for (post of posts) {
-            var newPost = new Post(post);
-            newPost.save();
         }
+    },
+
+    destroy: async (req, res) => {
+        try {
+            const post = await Post.deleteOne({ _id: req.params.id });
+
+            res.status(204).send();
+        } catch (error) {
+            res.status(500).send({
+                error: error,
+            });
+        }
+    },
+
+    generateSeed: async (req, res) => {
+        let fakePosts = [];
+
+        // Dummy some fake data
+        for (let i = 0; i < 5; i++) {
+            const newPost = new Post({
+                title: faker.lorem.sentence(),
+                body: faker.lorem.sentences(),
+            });
+
+            const savePost = await newPost.save();
+
+            fakePosts.push(savePost);
+        }
+
+        return fakePosts;
+    },
+
+    seed: async (req, res) => {
+        await this.generateSeed();
 
         res.status(200).send({
             message: 'Post database seeded successfully',
