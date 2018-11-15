@@ -10,7 +10,7 @@ const postsController = {
 
             res.status(200).send({
                 count: posts.length,
-                data: posts.map(post => {
+                data: posts.map((post) => {
                     return {
                         _id: post._id,
                         title: post.title,
@@ -60,13 +60,13 @@ const postsController = {
         try {
             const post = await Post.findById(req.params.id);
 
-            if (post) {
-                res.status(200).json(post);
-            } else {
-                res.status(404).send({
+            if (!post) {
+                return res.status(404).send({
                     message: 'No valid ID was found',
                 });
             }
+
+            res.status(200).json(post);
         } catch (error) {
             res.status(500).send({
                 error: error,
@@ -134,7 +134,7 @@ const postsController = {
     },
 
     seed: async (req, res) => {
-        await this.generateSeed();
+        await postsController.generateSeed();
 
         res.status(200).send({
             message: 'Post database seeded successfully',

@@ -10,7 +10,7 @@ const usersController = {
 
             res.status(200).send({
                 count: users.length,
-                data: users.map(user => {
+                data: users.map((user) => {
                     return {
                         _id: user._id,
                         email: user.email,
@@ -36,18 +36,18 @@ const usersController = {
                 return res.status(409).send({
                     message: 'Email already exists',
                 });
-            } else {
-                const newUser = new User({
-                    email: req.body.email,
-                    password: req.body.password,
-                });
-
-                const saveUser = await newUser.save();
-
-                res.status(201).send({
-                    message: 'User created successfully',
-                });
             }
+
+            const newUser = new User({
+                email: req.body.email,
+                password: req.body.password,
+            });
+
+            const saveUser = await newUser.save();
+
+            res.status(201).send({
+                message: 'User created successfully',
+            });
         } catch (error) {
             res.status(500).send({
                 error: error,
@@ -59,13 +59,13 @@ const usersController = {
         try {
             const user = await User.findById(req.params.id).select('_id email created_at');
 
-            if (user) {
-                res.status(200).json(user);
-            } else {
-                res.status(404).send({
+            if (!user) {
+                return res.status(404).send({
                     message: 'No valid ID was found',
                 });
             }
+
+            res.status(200).json(user);
         } catch (error) {
             res.status(500).send({
                 error: error,
@@ -104,7 +104,7 @@ const usersController = {
     },
 
     seed: async (req, res) => {
-        await this.generateSeed();
+        await usersController.generateSeed();
 
         res.status(200).send({
             message: 'User database seeded successfully',
