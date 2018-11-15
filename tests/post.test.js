@@ -41,7 +41,7 @@ describe('get /posts - List all Posts', () => {
         try {
             const response = await request(app).get('/posts');
             expect(response.statusCode).toBe(200);
-            expect(response.body.count).toEqual(5);
+            expect(response.body.total).toEqual(5);
             expect(response.body.data).toBeDefined();
         } catch (e) {
             console.log(e);

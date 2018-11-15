@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const mongoosePaginate = require('mongoose-paginate');
 
 const userSchema = mongoose.Schema({
     email: {
@@ -18,22 +19,22 @@ const userSchema = mongoose.Schema({
     },
 });
 
-userSchema.pre('save', function(next) {
-    const user = this;
-
-    if (!user.isModified('password')) {
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) {
         return next();
     }
 
-    bcrypt.hash(user.password, 12, (err, hash) => {
-        if (err) {
-            return next(err);
-        }
+    const hash = await bcrypt.hash(this.password, 12, null);
 
-        user.password = hash;
+    if (!hash) {
+        return next();
+    }
 
-        next();
-    });
+    this.password = hash;
+
+    next();
 });
+
+userSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('User', userSchema);

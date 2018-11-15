@@ -6,11 +6,21 @@ const User = require('../models/user');
 const usersController = {
     index: async (req, res) => {
         try {
-            const users = await User.find().select('_id email created_at');
+            const options = {
+                select: '_id email created_at',
+                sort: { created_at: -1 },
+                page: parseInt(req.query.page ? req.query.page : 1),
+                limit: parseInt(req.query.limit ? req.query.limit : 15),
+            }
+
+            const users = await User.paginate({}, options);
 
             res.status(200).send({
-                count: users.length,
-                data: users.map((user) => {
+                total: users.total,
+                limit: users.limit,
+                page: users.page,
+                pages: users.pages,
+                data: users.docs.map((user) => {
                     return {
                         _id: user._id,
                         email: user.email,
@@ -91,7 +101,7 @@ const usersController = {
         // Dummy some fake data
         for (let i = 0; i < 5; i++) {
             const newUser = new User({
-                email: faker.internet.email(),
+                email: faker.internet.email().toLowerCase(),
                 password: 'secret',
             });
 

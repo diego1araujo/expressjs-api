@@ -52,7 +52,7 @@ describe('get /users - List all Users', () => {
         try {
             const response = await request(app).get('/users');
             expect(response.statusCode).toBe(200);
-            expect(response.body.count).toEqual(6);
+            expect(response.body.total).toEqual(6);
             expect(response.body.data).toBeDefined();
         } catch (e) {
             console.log(e);

@@ -6,11 +6,21 @@ const Post = require('../models/post');
 const postsController = {
     index: async (req, res) => {
         try {
-            const posts = await Post.find().select('_id title created_at');
+            const options = {
+                select: '_id title created_at',
+                sort: { created_at: -1 },
+                page: parseInt(req.query.page ? req.query.page : 1),
+                limit: parseInt(req.query.limit ? req.query.limit : 15),
+            }
+
+            const posts = await Post.paginate({}, options);
 
             res.status(200).send({
-                count: posts.length,
-                data: posts.map((post) => {
+                total: posts.total,
+                limit: posts.limit,
+                page: posts.page,
+                pages: posts.pages,
+                data: posts.docs.map((post) => {
                     return {
                         _id: post._id,
                         title: post.title,
