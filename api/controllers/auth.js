@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -39,7 +38,7 @@ const authController = {
 
                     return res.status(200).send({
                         message: 'Auth successful',
-                        token: token,
+                        token,
                     });
                 }
 
@@ -49,10 +48,10 @@ const authController = {
             });
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
-}
+};
 
 module.exports = authController;

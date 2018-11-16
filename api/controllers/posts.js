@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const faker = require('faker');
 
 const Post = require('../models/post');
@@ -11,7 +10,7 @@ const postsController = {
                 sort: { created_at: -1 },
                 page: parseInt(req.query.page ? req.query.page : 1),
                 limit: parseInt(req.query.limit ? req.query.limit : 15),
-            }
+            };
 
             const posts = await Post.paginate({}, options);
 
@@ -26,14 +25,14 @@ const postsController = {
                         title: post.title,
                         created_at: post.created_at,
                         request: {
-                            url: '/posts/' + post._id,
+                            url: `/posts/${post._id}`,
                         },
-                    }
+                    };
                 }),
             });
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
@@ -55,13 +54,13 @@ const postsController = {
                     body: post.body,
                     created_at: post.created_at,
                     request: {
-                        url: '/posts/' + post._id,
+                        url: `/posts/${post._id}`,
                     },
                 },
             });
         } catch (error) {
             res.status(500).json({
-                error: error,
+                error,
             });
         }
     },
@@ -79,7 +78,7 @@ const postsController = {
             res.status(200).json(post);
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
@@ -98,35 +97,35 @@ const postsController = {
         }
 
         try {
-            const post = await Post.updateOne({ _id: req.params.id }, { $set: updateOps });
+            await Post.updateOne({ _id: req.params.id }, { $set: updateOps });
 
             res.status(200).send({
                 message: 'Post updated successfully',
                 request: {
-                    url: '/posts/' + req.params.id,
+                    url: `/posts/${req.params.id}`,
                 },
             });
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
 
     destroy: async (req, res) => {
         try {
-            const post = await Post.deleteOne({ _id: req.params.id });
+            await Post.deleteOne({ _id: req.params.id });
 
             res.status(204).send();
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
 
     generateSeed: async (req, res) => {
-        let fakePosts = [];
+        const fakePosts = [];
 
         // Dummy some fake data
         for (let i = 0; i < 5; i++) {
@@ -150,6 +149,6 @@ const postsController = {
             message: 'Post database seeded successfully',
         });
     },
-}
+};
 
 module.exports = postsController;

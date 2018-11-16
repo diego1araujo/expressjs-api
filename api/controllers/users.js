@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const faker = require('faker');
 
 const User = require('../models/user');
@@ -11,7 +10,7 @@ const usersController = {
                 sort: { created_at: -1 },
                 page: parseInt(req.query.page ? req.query.page : 1),
                 limit: parseInt(req.query.limit ? req.query.limit : 15),
-            }
+            };
 
             const users = await User.paginate({}, options);
 
@@ -26,14 +25,14 @@ const usersController = {
                         email: user.email,
                         created_at: user.created_at,
                         request: {
-                            url: '/users/' + user._id,
+                            url: `/users/${user._id}`,
                         },
-                    }
+                    };
                 }),
             });
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
@@ -53,14 +52,14 @@ const usersController = {
                 password: req.body.password,
             });
 
-            const saveUser = await newUser.save();
+            await newUser.save();
 
             res.status(201).send({
                 message: 'User created successfully',
             });
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
@@ -78,25 +77,25 @@ const usersController = {
             res.status(200).json(user);
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
 
     destroy: async (req, res) => {
         try {
-            const user = await User.deleteOne({ _id: req.params.id });
+            await User.deleteOne({ _id: req.params.id });
 
             res.status(204).send();
         } catch (error) {
             res.status(500).send({
-                error: error,
+                error,
             });
         }
     },
 
     generateSeed: async (req, res) => {
-        let fakeUsers = [];
+        const fakeUsers = [];
 
         // Dummy some fake data
         for (let i = 0; i < 5; i++) {
@@ -120,6 +119,6 @@ const usersController = {
             message: 'User database seeded successfully',
         });
     },
-}
+};
 
 module.exports = usersController;

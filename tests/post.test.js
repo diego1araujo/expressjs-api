@@ -13,7 +13,7 @@ beforeAll(async () => {
     await Post.deleteMany({}).exec();
 
     // Dummy some fake data
-    let fakePosts = await postsController.generateSeed();
+    const fakePosts = await postsController.generateSeed();
 
     // Get the fake posts and assign to env var
     process.env.POST_ID = fakePosts[0]._id;
@@ -26,7 +26,7 @@ beforeAll(async () => {
         const token = await jwt.sign({ userId: findUser[0]._id, email: findUser[0].email }, process.env.JWT_KEY, { expiresIn: '5h' });
 
         // Get the token and assign to env var
-        process.env.AUTH = 'Bearer ' + token;
+        process.env.AUTH = `Bearer ${token}`;
     }
 });
 
@@ -117,7 +117,7 @@ describe('get /posts/:id - Show a specific Post', () => {
         let id = process.env.POST_ID;
 
         try {
-            const response = await request(app).get('/posts/' + id);
+            const response = await request(app).get(`/posts/${id}`);
             expect(response.statusCode).toBe(200);
             expect(response.body.title).toBeDefined();
             expect(response.body.body).toBeDefined();
@@ -147,7 +147,7 @@ describe('patch /posts/:id - Update a Post with empty fields', () => {
         let auth = process.env.AUTH;
 
         try {
-            const response = await request(app).patch('/posts/' + id).set('Authorization', auth);
+            const response = await request(app).patch(`/posts/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(500);
             expect(response.body.error).toBeDefined();
         } catch (e) {
@@ -166,7 +166,7 @@ describe('patch /posts/:id - Update a Post properly', () => {
         }
 
         try {
-            const response = await request(app).patch('/posts/' + id).set('Authorization', auth).send(data);
+            const response = await request(app).patch(`/posts/${id}`).set('Authorization', auth).send(data);
             expect(response.statusCode).toBe(200);
             expect(response.body.message).toBe('Post updated successfully');
         } catch (e) {

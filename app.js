@@ -1,9 +1,10 @@
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+const app = express();
 
 const postRoutes = require('./api/routes/posts');
 const userRoutes = require('./api/routes/users');
@@ -11,7 +12,7 @@ const authRoutes = require('./api/routes/auth');
 
 require('dotenv').config();
 
-mongoose.connect('mongodb://localhost:27017/' + process.env.MONGO_DB, {
+mongoose.connect(`mongodb://localhost:27017/${process.env.MONGO_DB}`, {
     useCreateIndex: true,
     useNewUrlParser: true,
 });
@@ -22,7 +23,7 @@ if (process.env.NODE_ENV !== 'test') {
     app.use(morgan('dev'));
 }
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(cors());
@@ -45,7 +46,7 @@ app.use((req, res, next) => {
     next(error);
 });
 
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
     res.status(error.status || 500);
     res.json({
         error: {

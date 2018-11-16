@@ -11,7 +11,7 @@ beforeAll(async () => {
     // Clean all users documents
     await User.deleteMany({}).exec();
 
-    let data = {
+    const data = {
         email: 'admin@email.com',
         password: 'secret',
     }
@@ -28,11 +28,11 @@ beforeAll(async () => {
         const token = await jwt.sign({ userId: findUser[0]._id, email: findUser[0].email }, process.env.JWT_KEY, { expiresIn: '5h' });
 
         // Get the token and assign to env var
-        process.env.AUTH = 'Bearer ' + token;
+        process.env.AUTH = `Bearer ${token}`;
     }
 
     // Dummy some fake data
-    let fakeUsers = await usersController.generateSeed();
+    const fakeUsers = await usersController.generateSeed();
 
     // Get some fake user ID and assign to env var
     process.env.USER_ID = fakeUsers[0]._id;
@@ -142,7 +142,7 @@ describe('get /users/:id - Show a specific User properly', () => {
         let auth = process.env.AUTH;
 
         try {
-            const response = await request(app).get('/users/' + id).set('Authorization', auth);
+            const response = await request(app).get(`/users/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(200);
             expect(response.body.email).toBeDefined();
         } catch (e) {
@@ -171,7 +171,7 @@ describe('delete /users/:id - Delete a User properly', () => {
         let auth = process.env.AUTH;
 
         try {
-            const response = await request(app).delete('/users/' + id).set('Authorization', auth);
+            const response = await request(app).delete(`/users/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(204);
         } catch (e) {
             console.log(e);
