@@ -15,29 +15,22 @@ beforeAll(async () => {
     // Dummy some fake data
     const fakePosts = await postsController.generateSeed();
 
-    // Get the fake posts and assign to env var
+    // Get random fake post and assign it to env var
     process.env.POST_ID = fakePosts[0]._id;
 
-    // Find the user data
-    const findUser = await User.find({ email: 'admin@email.com' });
+    // Generate a token
+    const token = await jwt.sign({ id: 1 }, process.env.JWT_KEY, { expiresIn: '5h' });
 
-    if (findUser) {
-        // Generate a token for user
-        const token = await jwt.sign({ userId: findUser[0]._id, email: findUser[0].email }, process.env.JWT_KEY, { expiresIn: '5h' });
-
-        // Get the token and assign to env var
-        process.env.AUTH = `Bearer ${token}`;
-    }
+    // Get the token and assign it to an env var
+    process.env.AUTH = `Bearer ${token}`;
 });
 
 afterAll(async () => {
     await mongoose.disconnect();
 });
 
-// ======= GET /posts
-
-describe('get /posts - List all Posts', () => {
-    test('It should respond with an array of object containing all Posts', async () => {
+describe('get /posts', () => {
+    test('It should respond with an array containing all posts', async () => {
         try {
             const response = await request(app).get('/posts');
             expect(response.statusCode).toBe(200);
@@ -49,9 +42,7 @@ describe('get /posts - List all Posts', () => {
     });
 });
 
-// ======= POST /posts
-
-describe('post /posts - Create a new Post without authorization', () => {
+describe('post /posts', () => {
     test('It should respond with an `Unauthorized` message', async () => {
         try {
             const response = await request(app).post('/posts');
@@ -61,11 +52,9 @@ describe('post /posts - Create a new Post without authorization', () => {
             console.log(e);
         }
     });
-});
 
-describe('post /posts - Create a new Post with empty fields', () => {
-    test('It should throw an error when no data was sent', async () => {
-        let auth = process.env.AUTH;
+    test('It should throw an error due to no data was sent', async () => {
+        const auth = process.env.AUTH;
 
         try {
             const response = await request(app).post('/posts').set('Authorization', auth);
@@ -75,16 +64,14 @@ describe('post /posts - Create a new Post with empty fields', () => {
             console.log(e);
         }
     });
-});
 
-describe('post /posts - Create a new Post properly', () => {
     test('It should respond with a success message', async () => {
-        let data = {
+        const data = {
             title: 'Example 01',
             body: 'A body text example',
-        }
+        };
 
-        let auth = process.env.AUTH;
+        const auth = process.env.AUTH;
 
         try {
             const response = await request(app).post('/posts').set('Authorization', auth).send(data);
@@ -98,10 +85,8 @@ describe('post /posts - Create a new Post properly', () => {
     });
 });
 
-// ======= GET /posts/:id
-
-describe('get /posts/:id - Show a specific Post with invalid id', () => {
-    test('It should throw an error message that provided ID is invalid', async () => {
+describe('get /posts/:id', () => {
+    test('It should throw an error due to provided ID is invalid', async () => {
         try {
             const response = await request(app).get('/posts/123456');
             expect(response.statusCode).toBe(500);
@@ -110,11 +95,9 @@ describe('get /posts/:id - Show a specific Post with invalid id', () => {
             console.log(e);
         }
     });
-});
 
-describe('get /posts/:id - Show a specific Post', () => {
     test('It should respond with a Post data', async () => {
-        let id = process.env.POST_ID;
+        const id = process.env.POST_ID;
 
         try {
             const response = await request(app).get(`/posts/${id}`);
@@ -127,10 +110,8 @@ describe('get /posts/:id - Show a specific Post', () => {
     });
 });
 
-// ======= PATCH /posts/:id
-
-describe('patch /posts/:id - Update a Post without authorization', () => {
-    test('It should respond with an `Unauthorized` message', async () => {
+describe('patch /posts/:id', () => {
+    test('It should throw an error message: `Unauthorized`', async () => {
         try {
             const response = await request(app).patch('/posts/123456');
             expect(response.statusCode).toBe(401);
@@ -139,12 +120,10 @@ describe('patch /posts/:id - Update a Post without authorization', () => {
             console.log(e);
         }
     });
-});
 
-describe('patch /posts/:id - Update a Post with empty fields', () => {
-    test('It should throw an error when no data was sent', async () => {
-        let id = process.env.POST_ID;
-        let auth = process.env.AUTH;
+    test('It should throw an error due to no data was sent', async () => {
+        const id = process.env.POST_ID;
+        const auth = process.env.AUTH;
 
         try {
             const response = await request(app).patch(`/posts/${id}`).set('Authorization', auth);
@@ -154,16 +133,14 @@ describe('patch /posts/:id - Update a Post with empty fields', () => {
             console.log(e);
         }
     });
-});
 
-describe('patch /posts/:id - Update a Post properly', () => {
     test('It should respond with a success message', async () => {
-        let id = process.env.POST_ID;
-        let auth = process.env.AUTH;
+        const id = process.env.POST_ID;
+        const auth = process.env.AUTH;
 
-        let data = {
+        const data = {
             title: 'Title 01',
-        }
+        };
 
         try {
             const response = await request(app).patch(`/posts/${id}`).set('Authorization', auth).send(data);
@@ -175,10 +152,8 @@ describe('patch /posts/:id - Update a Post properly', () => {
     });
 });
 
-// ======= DELETE /posts/:id
-
-describe('delete /posts/:id - Delete a Post without authorization', () => {
-    test('It should respond with an `Unauthorized` message', async () => {
+describe('delete /posts/:id', () => {
+    test('It should throw an error message: `Unauthorized`', async () => {
         try {
             const response = await request(app).delete('/posts/123456');
             expect(response.statusCode).toBe(401);
@@ -187,12 +162,10 @@ describe('delete /posts/:id - Delete a Post without authorization', () => {
             console.log(e);
         }
     });
-});
 
-describe('delete /posts/:id - Delete a Post properly', () => {
-    test('It should respond with NO CONTENT status (204)', async () => {
-        let id = process.env.POST_ID;
-        let auth = process.env.AUTH;
+    test('It should respond with 204 status `No Content`', async () => {
+        const id = process.env.POST_ID;
+        const auth = process.env.AUTH;
 
         try {
             const response = await request(app).delete('/posts/' + id).set('Authorization', auth);

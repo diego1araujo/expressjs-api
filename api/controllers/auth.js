@@ -23,28 +23,28 @@ const authController = {
                 });
             }
 
-            bcrypt.compare(req.body.password, user[0].password, async (err, result) => {
-                if (result) {
-                    const payload = {
-                        userId: user[0]._id,
-                        email: user[0].email,
-                    };
+            const hash = bcrypt.compareSync(req.body.password, user[0].password);
 
-                    const expires = {
-                        expiresIn: '5h',
-                    };
+            if (hash) {
+                const payload = {
+                    userId: user[0]._id,
+                    email: user[0].email,
+                };
 
-                    const token = await jwt.sign(payload, process.env.JWT_KEY, expires);
+                const expires = {
+                    expiresIn: '5h',
+                };
 
-                    return res.status(200).send({
-                        message: 'Auth successful',
-                        token,
-                    });
-                }
+                const token = await jwt.sign(payload, process.env.JWT_KEY, expires);
 
-                return res.status(401).send({
-                    message: 'Invalid Credentials',
+                return res.status(200).send({
+                    message: 'Auth successful',
+                    token,
                 });
+            }
+
+            return res.status(401).send({
+                message: 'Invalid Credentials',
             });
         } catch (error) {
             res.status(500).send({
