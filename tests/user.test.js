@@ -49,7 +49,52 @@ describe('post /users', () => {
         try {
             const response = await request(app).post('/users');
             expect(response.statusCode).toBe(500);
-            expect(response.body.error).toBeDefined();
+            expect(response.body.errors).toBeDefined();
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
+    test('It should throw an error due to email address is invalid', async () => {
+        const data = {
+            email: 'useremail.com',
+        };
+
+        try {
+            const response = await request(app).post('/users').send(data);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.errors[0].msg).toBe('Email is invalid');
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
+    test('It should throw an error due to password_confirmation is empty', async () => {
+        const data = {
+            email: 'user@email.com',
+            password: '123456',
+        };
+
+        try {
+            const response = await request(app).post('/users').send(data);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.errors[1].msg).toBe('Password Confirmation is required');
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
+    test('It should throw an error due to passwords don\'t match', async () => {
+        const data = {
+            email: 'user@email.com',
+            password: '123456',
+            password_confirmation: '123',
+        };
+
+        try {
+            const response = await request(app).post('/users').send(data);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.errors[0].msg).toBe('Passwords must match');
         } catch (e) {
             console.log(e);
         }
@@ -59,6 +104,7 @@ describe('post /users', () => {
         const data = {
             email: 'user@email.com',
             password: '123456',
+            password_confirmation: '123456',
         };
 
         try {
@@ -74,6 +120,7 @@ describe('post /users', () => {
         const data = {
             email: 'user@email.com',
             password: '123456',
+            password_confirmation: '123456',
         };
 
         try {
@@ -152,7 +199,22 @@ describe('post /auth/login', () => {
         try {
             const response = await request(app).post('/auth/login');
             expect(response.statusCode).toBe(500);
-            expect(response.body.error).toBeDefined();
+            expect(response.body.errors).toBeDefined();
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
+    test('It should throw an error due to email address is invalid', async () => {
+        const data = {
+            email: 'randomemail.com',
+            password: '123456',
+        };
+
+        try {
+            const response = await request(app).post('/auth/login').send(data);
+            expect(response.statusCode).toBe(500);
+            expect(response.body.errors[0].msg).toBe('Email is invalid');
         } catch (e) {
             console.log(e);
         }
@@ -182,7 +244,7 @@ describe('post /auth/login', () => {
         try {
             const response = await request(app).post('/auth/login').send(data);
             expect(response.statusCode).toBe(200);
-            expect(response.body.message).toBe('Auth successful');
+            expect(response.body.message).toBe('You\'ve successfully authenticated.');
             expect(response.body.token).toBeDefined();
         } catch (e) {
             console.log(e);

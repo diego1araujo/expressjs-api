@@ -38,6 +38,36 @@ const usersController = {
     },
 
     store: async (req, res) => {
+        let email = req.body.email;
+        let password = req.body.password;
+        let password_confirmation = req.body.password_confirmation;
+
+        req.checkBody('email')
+            .notEmpty()
+            .withMessage('Email is required')
+            .isEmail()
+            .withMessage('Email is invalid');
+
+        req.checkBody('password')
+            .notEmpty()
+            .withMessage('Password is required')
+            .isLength({ min: 5 })
+            .withMessage('Password requires at least 5 characters')
+            .equals(password_confirmation)
+            .withMessage('Passwords must match');
+
+            req.checkBody('password_confirmation')
+            .notEmpty()
+            .withMessage('Password Confirmation is required')
+
+        var errors = req.validationErrors();
+
+        if (errors) {
+            return res.status(500).send({
+                errors,
+            });
+        }
+
         try {
             const user = await User.find({ email: req.body.email });
 

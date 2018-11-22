@@ -92,7 +92,7 @@ const postsController = {
 
         if (Object.keys(updateOps).length === 0) {
             return res.status(500).send({
-                error: 'Empty fields',
+                error: 'Fields cannot be empty',
             });
         }
 
