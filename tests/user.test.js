@@ -32,7 +32,7 @@ afterAll(async () => {
 });
 
 describe('get /users', () => {
-    test('It should respond with an array containing all users', async () => {
+    test('A user can view all users', async () => {
         try {
             const response = await request(app).get('/users');
             expect(response.statusCode).toBe(200);
@@ -45,7 +45,7 @@ describe('get /users', () => {
 });
 
 describe('post /users', () => {
-    test('It should throw an error due to sending empty fields', async () => {
+    test('A user may not be created if fields are empty', async () => {
         try {
             const response = await request(app).post('/users');
             expect(response.statusCode).toBe(500);
@@ -55,7 +55,7 @@ describe('post /users', () => {
         }
     });
 
-    test('It should throw an error due to email address is invalid', async () => {
+    test('A user may not be created if email address is invalid', async () => {
         const data = {
             email: 'useremail.com',
         };
@@ -69,7 +69,7 @@ describe('post /users', () => {
         }
     });
 
-    test('It should throw an error due to password_confirmation is empty', async () => {
+    test('A user may not be created if password_confirmation field is empty', async () => {
         const data = {
             email: 'user@email.com',
             password: '123456',
@@ -84,7 +84,7 @@ describe('post /users', () => {
         }
     });
 
-    test('It should throw an error due to passwords don\'t match', async () => {
+    test('A user may not be created if passwords are not equals', async () => {
         const data = {
             email: 'user@email.com',
             password: '123456',
@@ -100,7 +100,7 @@ describe('post /users', () => {
         }
     });
 
-    test('It should respond with a success message', async () => {
+    test('A user is successfully created when all data is correct', async () => {
         const data = {
             email: 'user@email.com',
             password: '123456',
@@ -116,7 +116,7 @@ describe('post /users', () => {
         }
     });
 
-    test('It should throw an error due to email address already exists', async () => {
+    test('A user may not be created if email already exists', async () => {
         const data = {
             email: 'user@email.com',
             password: '123456',
@@ -134,7 +134,7 @@ describe('post /users', () => {
 });
 
 describe('get /users/:id', () => {
-    test('It should throw an error message: `Unauthorized`', async () => {
+    test('Unauthorized user may not see a single user', async () => {
         try {
             const response = await request(app).get('/users/123456');
             expect(response.statusCode).toBe(401);
@@ -144,7 +144,7 @@ describe('get /users/:id', () => {
         }
     });
 
-    test('It should throw an error due to provided ID is invalid', async () => {
+    test('A user may not see a single user if provided ID is invalid', async () => {
         const auth = process.env.AUTH;
 
         try {
@@ -156,7 +156,7 @@ describe('get /users/:id', () => {
         }
     });
 
-    test('It should respond with User data', async () => {
+    test('A user can see a single user', async () => {
         const id = process.env.USER_ID;
         const auth = process.env.AUTH;
 
@@ -171,7 +171,7 @@ describe('get /users/:id', () => {
 });
 
 describe('delete /users/:id', () => {
-    test('It should throw an error message: `Unauthorized`', async () => {
+    test('Unauthorized user may not delete a user', async () => {
         try {
             const response = await request(app).delete('/users/123456');
             expect(response.statusCode).toBe(401);
@@ -181,7 +181,7 @@ describe('delete /users/:id', () => {
         }
     });
 
-    test('It should respond with 204 status `No Content`', async () => {
+    test('A user can delete a user', async () => {
         const id = process.env.USER_ID;
         const auth = process.env.AUTH;
 
@@ -195,7 +195,7 @@ describe('delete /users/:id', () => {
 });
 
 describe('post /auth/login', () => {
-    test('It should throw an error due to no data was sent', async () => {
+    test('A user may not authenticate if fields are empty', async () => {
         try {
             const response = await request(app).post('/auth/login');
             expect(response.statusCode).toBe(500);
@@ -205,7 +205,7 @@ describe('post /auth/login', () => {
         }
     });
 
-    test('It should throw an error due to email address is invalid', async () => {
+    test('A user may not authenticate if email address is invalid', async () => {
         const data = {
             email: 'randomemail.com',
             password: '123456',
@@ -220,7 +220,7 @@ describe('post /auth/login', () => {
         }
     });
 
-    test('It should throw an error due to invalid credentials', async () => {
+    test('A user may not authenticate if credentials are invalid', async () => {
         const data = {
             email: 'random@email.com',
             password: '123456',
@@ -235,7 +235,7 @@ describe('post /auth/login', () => {
         }
     });
 
-    test('It should respond with a success message and generated jwt token', async () => {
+    test('A user is successfully authenticated', async () => {
         const data = {
             email: process.env.USER_EMAIL,
             password: 'secret',

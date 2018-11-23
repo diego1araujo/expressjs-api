@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "SET NODE_ENV=dev&&SET MONGO_DB=nodejs-api&&nodemon server.js",
-    "test": "SET NODE_ENV=test&&SET MONGO_DB=nodejs-api-test&&jest tests/"
+    "test": "SET NODE_ENV=test&&SET MONGO_DB=nodejs-api-test&&jest tests/ --verbose"
   },
   "keywords": [],
   "author": "",

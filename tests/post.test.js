@@ -30,7 +30,7 @@ afterAll(async () => {
 });
 
 describe('get /posts', () => {
-    test('It should respond with an array containing all posts', async () => {
+    test('A user can view all posts', async () => {
         try {
             const response = await request(app).get('/posts');
             expect(response.statusCode).toBe(200);
@@ -43,7 +43,7 @@ describe('get /posts', () => {
 });
 
 describe('post /posts', () => {
-    test('It should respond with an `Unauthorized` message', async () => {
+    test('Unauthorized user may not create a post', async () => {
         try {
             const response = await request(app).post('/posts');
             expect(response.statusCode).toBe(401);
@@ -53,7 +53,7 @@ describe('post /posts', () => {
         }
     });
 
-    test('It should throw an error due to no data was sent', async () => {
+    test('A post may not be created if fields are empty', async () => {
         const auth = process.env.AUTH;
 
         try {
@@ -65,7 +65,7 @@ describe('post /posts', () => {
         }
     });
 
-    test('It should respond with a success message', async () => {
+    test('A post is successfully created when all data is correct', async () => {
         const data = {
             title: 'Example 01',
             body: 'A body text example',
@@ -86,7 +86,7 @@ describe('post /posts', () => {
 });
 
 describe('get /posts/:id', () => {
-    test('It should throw an error due to provided ID is invalid', async () => {
+    test('A user may not see a single post if provided ID is invalid', async () => {
         try {
             const response = await request(app).get('/posts/123456');
             expect(response.statusCode).toBe(500);
@@ -96,7 +96,7 @@ describe('get /posts/:id', () => {
         }
     });
 
-    test('It should respond with a Post data', async () => {
+    test('A user can see a single post', async () => {
         const id = process.env.POST_ID;
 
         try {
@@ -111,7 +111,7 @@ describe('get /posts/:id', () => {
 });
 
 describe('patch /posts/:id', () => {
-    test('It should throw an error message: `Unauthorized`', async () => {
+    test('Unauthorized user may not update a single post', async () => {
         try {
             const response = await request(app).patch('/posts/123456');
             expect(response.statusCode).toBe(401);
@@ -121,7 +121,7 @@ describe('patch /posts/:id', () => {
         }
     });
 
-    test('It should throw an error due to no data was sent', async () => {
+    test('A post may not be updated if fields are empty', async () => {
         const id = process.env.POST_ID;
         const auth = process.env.AUTH;
 
@@ -134,7 +134,7 @@ describe('patch /posts/:id', () => {
         }
     });
 
-    test('It should respond with a success message', async () => {
+    test('A user is successfully updated when all data is correct', async () => {
         const id = process.env.POST_ID;
         const auth = process.env.AUTH;
 
@@ -153,7 +153,7 @@ describe('patch /posts/:id', () => {
 });
 
 describe('delete /posts/:id', () => {
-    test('It should throw an error message: `Unauthorized`', async () => {
+    test('Unauthorized user may not delete a post', async () => {
         try {
             const response = await request(app).delete('/posts/123456');
             expect(response.statusCode).toBe(401);
@@ -163,7 +163,7 @@ describe('delete /posts/:id', () => {
         }
     });
 
-    test('It should respond with 204 status `No Content`', async () => {
+    test('A user can delete a post', async () => {
         const id = process.env.POST_ID;
         const auth = process.env.AUTH;
 
