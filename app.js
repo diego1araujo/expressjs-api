@@ -11,7 +11,9 @@ const postRoutes = require('./api/routes/posts');
 const userRoutes = require('./api/routes/users');
 const authRoutes = require('./api/routes/auth');
 
-require('dotenv').config();
+require('dotenv').config({
+    path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+});
 
 mongoose.connect(`mongodb://localhost:27017/${process.env.MONGO_DB}`, {
     useCreateIndex: true,
