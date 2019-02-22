@@ -1,9 +1,7 @@
-const express = require('express');
+const router = require('express').Router();
 
 const usersController = require('../controllers/users');
 const auth = require('../middleware/auth');
-
-const router = express.Router();
 
 router.get('/', usersController.index);
 router.post('/', usersController.store);
