@@ -1,0 +1,55 @@
+@host = localhost:3000
+@token = Bearer [token]
+
+### Index
+
+GET http://{{host}}/posts
+
+### Create / Store
+
+POST http://{{host}}/posts
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "title": "Teste 01",
+    "body": "Teste de texto"
+}
+
+### Store Empty Fields
+
+POST http://{{host}}/posts
+Content-Type: application/json
+Authorization: {{token}}
+
+### Store Empty Fields But No Auth
+
+POST http://{{host}}/posts
+Content-Type: application/json
+
+### Show
+
+GET http://{{host}}/posts/5bed72058d40ec2a6465c0b7
+
+### Show Invalid ID
+
+GET http://{{host}}/posts/123456
+
+### Update
+
+PUT http://{{host}}/posts/5be8f77bd66f3a2758007749
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+    "title": "Lorem ipsum 00001"
+}
+
+### Destroy
+
+DELETE http://{{host}}/posts/5be8f77bd66f3a2758007749
+Authorization: {{token}}
+
+### Seed
+
+GET http://{{host}}/posts/seed

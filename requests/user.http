@@ -1,0 +1,61 @@
+@host = localhost:3000
+@token = Bearer [token]
+
+### Index
+
+GET http://{{host}}/users
+
+### Create / Store
+
+POST http://{{host}}/users
+Content-Type: application/json
+
+{
+    "email": "email@email.com",
+    "password": "secret",
+    "password_confirmation": "secret"
+}
+
+### Store Passwords dont match
+
+POST http://{{host}}/users
+Content-Type: application/json
+
+{
+    "email": "user@email.com",
+    "password": "123456",
+    "password_confirmation": "123"
+}
+
+### Store Invalid Email
+
+POST http://{{host}}/users
+Content-Type: application/json
+
+{
+    "email": "emailemail.com",
+}
+
+### Store Empty Fields
+
+POST http://{{host}}/users
+Content-Type: application/json
+
+### Show
+
+GET http://{{host}}/users/5beb22b3fd4e5129ec79b3d8
+Authorization: {{token}}
+
+### Show Invalid ID
+
+GET http://{{host}}/users/123456
+Authorization: {{token}}
+
+### Destroy
+
+DELETE http://{{host}}/users/5beb22b3fd4e5129ec79b3d7
+Authorization: {{token}}
+
+### Seed
+
+GET http://{{host}}/users/seed
