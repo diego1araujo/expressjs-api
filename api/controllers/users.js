@@ -8,18 +8,18 @@ const usersController = {
             const options = {
                 select: '_id email created_at',
                 sort: { created_at: -1 },
-                page: parseInt(req.query.page ? req.query.page : 1),
-                limit: parseInt(req.query.limit ? req.query.limit : 15),
+                page: parseInt(req.query.page ? req.query.page : 1, 10),
+                limit: parseInt(req.query.limit ? req.query.limit : 15, 10),
             };
 
             const users = await User.paginate({}, options);
 
             res.status(200).send({
-                total: users.total,
+                total: users.totalDocs,
                 limit: users.limit,
                 page: users.page,
-                pages: users.pages,
-                data: users.docs.map((user) => {
+                pages: users.totalPages,
+                data: users.docs.map(user => {
                     return {
                         _id: user._id,
                         email: user.email,
@@ -56,9 +56,9 @@ const usersController = {
             .equals(password_confirmation)
             .withMessage('Passwords must match');
 
-            req.checkBody('password_confirmation')
+        req.checkBody('password_confirmation')
             .notEmpty()
-            .withMessage('Password Confirmation is required')
+            .withMessage('Password Confirmation is required');
 
         var errors = req.validationErrors();
 
@@ -124,11 +124,11 @@ const usersController = {
         }
     },
 
-    generateSeed: async (req, res) => {
+    generateSeed: async () => {
         const fakeUsers = [];
 
         // Dummy some fake data
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i += 1) {
             const newUser = new User({
                 email: faker.internet.email().toLowerCase(),
                 password: 'secret',

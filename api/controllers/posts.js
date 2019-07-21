@@ -8,18 +8,18 @@ const postsController = {
             const options = {
                 select: '_id title created_at',
                 sort: { created_at: -1 },
-                page: parseInt(req.query.page ? req.query.page : 1),
-                limit: parseInt(req.query.limit ? req.query.limit : 15),
+                page: parseInt(req.query.page ? req.query.page : 1, 10),
+                limit: parseInt(req.query.limit ? req.query.limit : 15, 10),
             };
 
             const posts = await Post.paginate({}, options);
 
             res.status(200).send({
-                total: posts.total,
+                total: posts.totalDocs,
                 limit: posts.limit,
                 page: posts.page,
-                pages: posts.pages,
-                data: posts.docs.map((post) => {
+                pages: posts.totalPages,
+                data: posts.docs.map(post => {
                     return {
                         _id: post._id,
                         title: post.title,
@@ -124,11 +124,11 @@ const postsController = {
         }
     },
 
-    generateSeed: async (req, res) => {
+    generateSeed: async () => {
         const fakePosts = [];
 
         // Dummy some fake data
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i += 1) {
             const newPost = new Post({
                 title: faker.lorem.sentence(),
                 body: faker.lorem.sentences(),

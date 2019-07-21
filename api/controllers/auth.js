@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
@@ -18,7 +18,7 @@ const authController = {
             .notEmpty()
             .withMessage('Password is required');
 
-        var errors = req.validationErrors();
+        const errors = req.validationErrors();
 
         if (errors) {
             return res.status(500).send({
@@ -35,18 +35,18 @@ const authController = {
                 });
             }
 
-            const hash = await bcrypt.compare(req.body.password, user[0].password);
+            const hash = await bcrypt.compareSync(req.body.password, user[0].password);
 
             if (hash) {
-                const token = await jwt.sign({
+                const data = {
                     id: user[0]._id,
                     email: user[0].email,
-                }, process.env.JWT_KEY, {
-                    expiresIn: '5h',
-                });
+                };
+
+                const token = await jwt.sign({ data }, process.env.JWT_KEY, { expiresIn: '5h' });
 
                 return res.status(200).send({
-                    message: 'You\'ve successfully authenticated.',
+                    message: 'You have successfully authenticated.',
                     token,
                 });
             }

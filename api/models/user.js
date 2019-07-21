@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const mongoosePaginate = require('mongoose-paginate');
+const mongoosePaginate = require('mongoose-paginate-v2');
+const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema({
     email: {
@@ -24,7 +24,7 @@ userSchema.pre('save', async function(next) {
         return next();
     }
 
-    const hash = await bcrypt.hash(this.password, 12);
+    const hash = await bcrypt.hashSync(this.password, 12);
 
     if (!hash) {
         return next();
