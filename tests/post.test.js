@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const app = require('../app');
 
 const Post = require('../api/models/post');
-const User = require('../api/models/user');
 
 const postsController = require('../api/controllers/posts');
 
