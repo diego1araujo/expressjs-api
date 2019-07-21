@@ -244,7 +244,7 @@ describe('post /auth/login', () => {
         try {
             const response = await request(app).post('/auth/login').send(data);
             expect(response.statusCode).toBe(200);
-            expect(response.body.message).toBe('You\'ve successfully authenticated.');
+            expect(response.body.message).toBe('You have successfully authenticated.');
             expect(response.body.token).toBeDefined();
         } catch (e) {
             console.log(e);
