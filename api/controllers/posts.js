@@ -84,9 +84,9 @@ const postsController = {
     update: async (req, res) => {
         const updateOps = {};
 
-        for (const [key, value] of Object.entries(req.body)) {
+        Object.entries(req.body).forEach((key, value) => {
             updateOps[key] = value;
-        }
+        });
 
         if (Object.keys(updateOps).length === 0) {
             return res.status(500).send({
