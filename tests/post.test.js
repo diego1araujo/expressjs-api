@@ -167,7 +167,7 @@ describe('delete /posts/:id', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).delete('/posts/' + id).set('Authorization', auth);
+            const response = await request(app).delete(`/posts/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(204);
         } catch (e) {
             console.log(e);

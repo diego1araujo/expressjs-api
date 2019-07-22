@@ -19,16 +19,14 @@ const postsController = {
                 limit: posts.limit,
                 page: posts.page,
                 pages: posts.totalPages,
-                data: posts.docs.map(post => {
-                    return {
-                        _id: post._id,
-                        title: post.title,
-                        created_at: post.created_at,
-                        request: {
-                            url: `/posts/${post._id}`,
-                        },
-                    };
-                }),
+                data: posts.docs.map(post => ({
+                    _id: post._id,
+                    title: post.title,
+                    created_at: post.created_at,
+                    request: {
+                        url: `/posts/${post._id}`,
+                    },
+                })),
             });
         } catch (error) {
             res.status(500).send({

@@ -19,16 +19,14 @@ const usersController = {
                 limit: users.limit,
                 page: users.page,
                 pages: users.totalPages,
-                data: users.docs.map(user => {
-                    return {
-                        _id: user._id,
-                        email: user.email,
-                        created_at: user.created_at,
-                        request: {
-                            url: `/users/${user._id}`,
-                        },
-                    };
-                }),
+                data: users.docs.map(user => ({
+                    _id: user._id,
+                    email: user.email,
+                    created_at: user.created_at,
+                    request: {
+                        url: `/users/${user._id}`,
+                    },
+                })),
             });
         } catch (error) {
             res.status(500).send({
@@ -60,7 +58,7 @@ const usersController = {
             .notEmpty()
             .withMessage('Password Confirmation is required');
 
-        var errors = req.validationErrors();
+        const errors = req.validationErrors();
 
         if (errors) {
             return res.status(500).send({

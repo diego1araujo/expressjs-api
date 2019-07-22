@@ -5,8 +5,8 @@ const User = require('../models/user');
 
 const authController = {
     login: async (req, res) => {
-        let email = req.body.email;
-        let password = req.body.password;
+        const email = req.body.email;
+        const password = req.body.password;
 
         req.checkBody('email')
             .notEmpty()
