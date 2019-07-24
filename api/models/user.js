@@ -12,6 +12,8 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true,
+        minlength: 5,
+        maxlength: 16,
     },
     created_at: {
         type: Date,
