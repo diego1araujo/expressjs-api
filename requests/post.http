@@ -1,5 +1,5 @@
-@host = localhost:3000
-@token = Bearer [token]
+@host = localhost:3000/api
+@token = Bearer token
 
 ### Index
 

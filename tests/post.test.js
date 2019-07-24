@@ -31,7 +31,7 @@ afterAll(async () => {
 describe('get /posts', () => {
     test('A user can view all posts', async () => {
         try {
-            const response = await request(app).get('/posts');
+            const response = await request(app).get('/api/posts');
             expect(response.statusCode).toBe(200);
             expect(response.body.total).toEqual(5);
             expect(response.body.data).toBeDefined();
@@ -44,7 +44,7 @@ describe('get /posts', () => {
 describe('post /posts', () => {
     test('Unauthorized user may not create a post', async () => {
         try {
-            const response = await request(app).post('/posts');
+            const response = await request(app).post('/api/posts');
             expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe('Unauthorized');
         } catch (e) {
@@ -56,7 +56,7 @@ describe('post /posts', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).post('/posts').set('Authorization', auth);
+            const response = await request(app).post('/api/posts').set('Authorization', auth);
             expect(response.statusCode).toBe(500);
             expect(response.body.error.errors).toBeDefined();
         } catch (e) {
@@ -73,7 +73,7 @@ describe('post /posts', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).post('/posts').set('Authorization', auth).send(data);
+            const response = await request(app).post('/api/posts').set('Authorization', auth).send(data);
             expect(response.statusCode).toBe(201);
             expect(response.body.message).toBe('Post created successfully');
             expect(response.body.data.title).toBe(data.title);
@@ -87,7 +87,7 @@ describe('post /posts', () => {
 describe('get /posts/:id', () => {
     test('A user may not see a single post if provided ID is invalid', async () => {
         try {
-            const response = await request(app).get('/posts/123456');
+            const response = await request(app).get('/api/posts/123456');
             expect(response.statusCode).toBe(500);
             expect(response.body.error.message).toBeDefined();
         } catch (e) {
@@ -99,7 +99,7 @@ describe('get /posts/:id', () => {
         const id = process.env.POST_ID;
 
         try {
-            const response = await request(app).get(`/posts/${id}`);
+            const response = await request(app).get(`/api/posts/${id}`);
             expect(response.statusCode).toBe(200);
             expect(response.body.title).toBeDefined();
             expect(response.body.body).toBeDefined();
@@ -112,7 +112,7 @@ describe('get /posts/:id', () => {
 describe('patch /posts/:id', () => {
     test('Unauthorized user may not update a single post', async () => {
         try {
-            const response = await request(app).patch('/posts/123456');
+            const response = await request(app).patch('/api/posts/123456');
             expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe('Unauthorized');
         } catch (e) {
@@ -125,7 +125,7 @@ describe('patch /posts/:id', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).patch(`/posts/${id}`).set('Authorization', auth);
+            const response = await request(app).patch(`/api/posts/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(500);
             expect(response.body.error).toBeDefined();
         } catch (e) {
@@ -142,7 +142,7 @@ describe('patch /posts/:id', () => {
         };
 
         try {
-            const response = await request(app).patch(`/posts/${id}`).set('Authorization', auth).send(data);
+            const response = await request(app).patch(`/api/posts/${id}`).set('Authorization', auth).send(data);
             expect(response.statusCode).toBe(200);
             expect(response.body.message).toBe('Post updated successfully');
         } catch (e) {
@@ -154,7 +154,7 @@ describe('patch /posts/:id', () => {
 describe('delete /posts/:id', () => {
     test('Unauthorized user may not delete a post', async () => {
         try {
-            const response = await request(app).delete('/posts/123456');
+            const response = await request(app).delete('/api/posts/123456');
             expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe('Unauthorized');
         } catch (e) {
@@ -167,7 +167,7 @@ describe('delete /posts/:id', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).delete(`/posts/${id}`).set('Authorization', auth);
+            const response = await request(app).delete(`/api/posts/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(204);
         } catch (e) {
             console.log(e);

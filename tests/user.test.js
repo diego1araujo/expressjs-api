@@ -34,7 +34,7 @@ afterAll(async () => {
 describe('get /users', () => {
     test('A user can view all users', async () => {
         try {
-            const response = await request(app).get('/users');
+            const response = await request(app).get('/api/users');
             expect(response.statusCode).toBe(200);
             expect(response.body.total).toEqual(5);
             expect(response.body.data).toBeDefined();
@@ -47,7 +47,7 @@ describe('get /users', () => {
 describe('post /users', () => {
     test('A user may not be created if fields are empty', async () => {
         try {
-            const response = await request(app).post('/users');
+            const response = await request(app).post('/api/users');
             expect(response.statusCode).toBe(500);
             expect(response.body.errors).toBeDefined();
         } catch (e) {
@@ -61,7 +61,7 @@ describe('post /users', () => {
         };
 
         try {
-            const response = await request(app).post('/users').send(data);
+            const response = await request(app).post('/api/users').send(data);
             expect(response.statusCode).toBe(500);
             expect(response.body.errors[0].msg).toBe('Email is invalid');
         } catch (e) {
@@ -76,7 +76,7 @@ describe('post /users', () => {
         };
 
         try {
-            const response = await request(app).post('/users').send(data);
+            const response = await request(app).post('/api/users').send(data);
             expect(response.statusCode).toBe(500);
             expect(response.body.errors[1].msg).toBe('Password Confirmation is required');
         } catch (e) {
@@ -92,7 +92,7 @@ describe('post /users', () => {
         };
 
         try {
-            const response = await request(app).post('/users').send(data);
+            const response = await request(app).post('/api/users').send(data);
             expect(response.statusCode).toBe(500);
             expect(response.body.errors[0].msg).toBe('Passwords must match');
         } catch (e) {
@@ -108,7 +108,7 @@ describe('post /users', () => {
         };
 
         try {
-            const response = await request(app).post('/users').send(data);
+            const response = await request(app).post('/api/users').send(data);
             expect(response.statusCode).toBe(201);
             expect(response.body.message).toBe('User created successfully');
         } catch (e) {
@@ -124,7 +124,7 @@ describe('post /users', () => {
         };
 
         try {
-            const response = await request(app).post('/users').send(data);
+            const response = await request(app).post('/api/users').send(data);
             expect(response.statusCode).toBe(409);
             expect(response.body.message).toBe('Email already exists');
         } catch (e) {
@@ -136,7 +136,7 @@ describe('post /users', () => {
 describe('get /users/:id', () => {
     test('Unauthorized user may not see a single user', async () => {
         try {
-            const response = await request(app).get('/users/123456');
+            const response = await request(app).get('/api/users/123456');
             expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe('Unauthorized');
         } catch (e) {
@@ -148,7 +148,7 @@ describe('get /users/:id', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).get('/users/123456').set('Authorization', auth);
+            const response = await request(app).get('/api/users/123456').set('Authorization', auth);
             expect(response.statusCode).toBe(500);
             expect(response.body.error.message).toBeDefined();
         } catch (e) {
@@ -161,7 +161,7 @@ describe('get /users/:id', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).get(`/users/${id}`).set('Authorization', auth);
+            const response = await request(app).get(`/api/users/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(200);
             expect(response.body.email).toBeDefined();
         } catch (e) {
@@ -173,7 +173,7 @@ describe('get /users/:id', () => {
 describe('delete /users/:id', () => {
     test('Unauthorized user may not delete a user', async () => {
         try {
-            const response = await request(app).delete('/users/123456');
+            const response = await request(app).delete('/api/users/123456');
             expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe('Unauthorized');
         } catch (e) {
@@ -186,7 +186,7 @@ describe('delete /users/:id', () => {
         const auth = process.env.AUTH;
 
         try {
-            const response = await request(app).delete(`/users/${id}`).set('Authorization', auth);
+            const response = await request(app).delete(`/api/users/${id}`).set('Authorization', auth);
             expect(response.statusCode).toBe(204);
         } catch (e) {
             console.log(e);
@@ -197,7 +197,7 @@ describe('delete /users/:id', () => {
 describe('post /auth/login', () => {
     test('A user may not authenticate if fields are empty', async () => {
         try {
-            const response = await request(app).post('/auth/login');
+            const response = await request(app).post('/api/auth/login');
             expect(response.statusCode).toBe(500);
             expect(response.body.errors).toBeDefined();
         } catch (e) {
@@ -212,7 +212,7 @@ describe('post /auth/login', () => {
         };
 
         try {
-            const response = await request(app).post('/auth/login').send(data);
+            const response = await request(app).post('/api/auth/login').send(data);
             expect(response.statusCode).toBe(500);
             expect(response.body.errors[0].msg).toBe('Email is invalid');
         } catch (e) {
@@ -227,7 +227,7 @@ describe('post /auth/login', () => {
         };
 
         try {
-            const response = await request(app).post('/auth/login').send(data);
+            const response = await request(app).post('/api/auth/login').send(data);
             expect(response.statusCode).toBe(401);
             expect(response.body.message).toBe('Invalid Credentials');
         } catch (e) {
@@ -242,7 +242,7 @@ describe('post /auth/login', () => {
         };
 
         try {
-            const response = await request(app).post('/auth/login').send(data);
+            const response = await request(app).post('/api/auth/login').send(data);
             expect(response.statusCode).toBe(200);
             expect(response.body.message).toBe('You have successfully authenticated.');
             expect(response.body.token).toBeDefined();
