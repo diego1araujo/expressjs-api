@@ -36,9 +36,7 @@ const usersController = {
     },
 
     store: async (req, res) => {
-        let email = req.body.email;
-        let password = req.body.password;
-        let password_confirmation = req.body.password_confirmation;
+        const { email, password, password_confirmation } = req.body;
 
         req.checkBody('email')
             .notEmpty()
@@ -67,7 +65,7 @@ const usersController = {
         }
 
         try {
-            const user = await User.find({ email: req.body.email });
+            const user = await User.find({ email });
 
             if (user.length > 0) {
                 return res.status(409).send({
@@ -76,8 +74,8 @@ const usersController = {
             }
 
             const newUser = new User({
-                email: req.body.email,
-                password: req.body.password,
+                email,
+                password,
             });
 
             await newUser.save();

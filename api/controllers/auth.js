@@ -5,8 +5,7 @@ const User = require('../models/user');
 
 const authController = {
     login: async (req, res) => {
-        const email = req.body.email;
-        const password = req.body.password;
+        const { email, password } = req.body;
 
         req.checkBody('email')
             .notEmpty()
@@ -27,7 +26,7 @@ const authController = {
         }
 
         try {
-            const user = await User.find({ email: req.body.email });
+            const user = await User.find({ email });
 
             if (user.length < 1) {
                 return res.status(401).send({
@@ -35,7 +34,7 @@ const authController = {
                 });
             }
 
-            const hash = await bcrypt.compareSync(req.body.password, user[0].password);
+            const hash = await bcrypt.compareSync(password, user[0].password);
 
             if (hash) {
                 const data = {

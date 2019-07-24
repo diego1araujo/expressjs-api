@@ -36,9 +36,11 @@ const postsController = {
     },
 
     store: async (req, res) => {
+        const { title, body } = req.body;
+
         const newPost = new Post({
-            title: req.body.title,
-            body: req.body.body,
+            title,
+            body,
         });
 
         try {
