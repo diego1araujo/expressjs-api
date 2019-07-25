@@ -7,20 +7,18 @@ const validator = require('express-validator');
 
 const app = express();
 
-require('dotenv').config({
-    path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-});
+require('dotenv').config();
 
-mongoose.connect(`mongodb://localhost:27017/${process.env.MONGO_DB}`, {
+const { NODE_ENV, DB_URI, DB_URI_TEST } = process.env;
+
+mongoose.connect(NODE_ENV === 'test' ? DB_URI_TEST : DB_URI, {
     useCreateIndex: true,
     useNewUrlParser: true,
 });
 
 mongoose.Promise = global.Promise;
 
-if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan('dev'));
-}
+if (NODE_ENV === 'dev') app.use(morgan('dev'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
