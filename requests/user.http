@@ -33,7 +33,19 @@ POST http://{{host}}/users
 Content-Type: application/json
 
 {
-    "email": "emailemail.com"
+    "email": "emailemail.com",
+    "password": "123456",
+    "password_confirmation": "123456"
+}
+
+### Store with empty password confirmation field
+
+POST http://{{host}}/users
+Content-Type: application/json
+
+{
+    "email": "user@email.com",
+    "password": "123456"
 }
 
 ### Store Empty Fields

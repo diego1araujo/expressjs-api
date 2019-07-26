@@ -3,6 +3,7 @@
     "rules": {
         "no-underscore-dangle": "off",
         "consistent-return": "off",
+        "no-undef": "off",
         "indent": ["error", 4]
     }
 }

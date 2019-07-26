@@ -33,40 +33,36 @@ afterAll(async () => {
 
 describe('get /users', () => {
     test('A user can view all users', async () => {
-        try {
-            const response = await request(app).get('/api/users');
-            expect(response.statusCode).toBe(200);
-            expect(response.body.total).toEqual(5);
-            expect(response.body.data).toBeDefined();
-        } catch (e) {
-            console.log(e);
-        }
+        const response = await request(app).get('/api/users');
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.total).toEqual(10);
+        expect(response.body.data).toBeDefined();
+        expect(response.body.data[0]).toHaveProperty('_id');
+        expect(response.body.data[0]).toHaveProperty('email');
     });
 });
 
 describe('post /users', () => {
     test('A user may not be created if fields are empty', async () => {
-        try {
-            const response = await request(app).post('/api/users');
-            expect(response.statusCode).toBe(500);
-            expect(response.body.errors).toBeDefined();
-        } catch (e) {
-            console.log(e);
-        }
+        const response = await request(app).post('/api/users');
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors[0].msg).toBe('Email is required');
+        expect(response.body.errors[2].msg).toBe('Password is required');
     });
 
     test('A user may not be created if email address is invalid', async () => {
         const data = {
             email: 'useremail.com',
+            password: '123456',
+            password_confirmation: '123456',
         };
+        const response = await request(app).post('/api/users').send(data);
 
-        try {
-            const response = await request(app).post('/api/users').send(data);
-            expect(response.statusCode).toBe(500);
-            expect(response.body.errors[0].msg).toBe('Email is invalid');
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(500);
+        expect(response.body.errors[0].msg).toBe('Email is invalid');
     });
 
     test('A user may not be created if password_confirmation field is empty', async () => {
@@ -74,14 +70,10 @@ describe('post /users', () => {
             email: 'user@email.com',
             password: '123456',
         };
+        const response = await request(app).post('/api/users').send(data);
 
-        try {
-            const response = await request(app).post('/api/users').send(data);
-            expect(response.statusCode).toBe(500);
-            expect(response.body.errors[1].msg).toBe('Password Confirmation is required');
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(500);
+        expect(response.body.errors[1].msg).toBe('Password Confirmation is required');
     });
 
     test('A user may not be created if passwords are not equals', async () => {
@@ -90,14 +82,10 @@ describe('post /users', () => {
             password: '123456',
             password_confirmation: '123',
         };
+        const response = await request(app).post('/api/users').send(data);
 
-        try {
-            const response = await request(app).post('/api/users').send(data);
-            expect(response.statusCode).toBe(500);
-            expect(response.body.errors[0].msg).toBe('Passwords must match');
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(500);
+        expect(response.body.errors[0].msg).toBe('Passwords must match');
     });
 
     test('A user is successfully created when all data is correct', async () => {
@@ -106,14 +94,10 @@ describe('post /users', () => {
             password: '123456',
             password_confirmation: '123456',
         };
+        const response = await request(app).post('/api/users').send(data);
 
-        try {
-            const response = await request(app).post('/api/users').send(data);
-            expect(response.statusCode).toBe(201);
-            expect(response.body.message).toBe('User created successfully');
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(201);
+        expect(response.body.message).toBe('User created successfully');
     });
 
     test('A user may not be created if email already exists', async () => {
@@ -122,132 +106,52 @@ describe('post /users', () => {
             password: '123456',
             password_confirmation: '123456',
         };
+        const response = await request(app).post('/api/users').send(data);
 
-        try {
-            const response = await request(app).post('/api/users').send(data);
-            expect(response.statusCode).toBe(409);
-            expect(response.body.message).toBe('Email already exists');
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(409);
+        expect(response.body.message).toBe('Email already exists');
     });
 });
 
 describe('get /users/:id', () => {
-    test('Unauthorized user may not see a single user', async () => {
-        try {
-            const response = await request(app).get('/api/users/123456');
-            expect(response.statusCode).toBe(401);
-            expect(response.body.message).toBe('Unauthorized');
-        } catch (e) {
-            console.log(e);
-        }
+    test('Unauthorized user may not see a user', async () => {
+        const response = await request(app).get('/api/users/123456');
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.message).toBe('Unauthorized');
     });
 
-    test('A user may not see a single user if provided ID is invalid', async () => {
+    test('A user may not see a user if provided ID is invalid', async () => {
         const auth = process.env.AUTH;
+        const response = await request(app).get('/api/users/123456').set('Authorization', auth);
 
-        try {
-            const response = await request(app).get('/api/users/123456').set('Authorization', auth);
-            expect(response.statusCode).toBe(500);
-            expect(response.body.error.message).toBeDefined();
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(500);
+        expect(response.body.error.message).toBeDefined();
     });
 
-    test('A user can see a single user', async () => {
+    test('A user can see a user', async () => {
         const id = process.env.USER_ID;
         const auth = process.env.AUTH;
+        const response = await request(app).get(`/api/users/${id}`).set('Authorization', auth);
 
-        try {
-            const response = await request(app).get(`/api/users/${id}`).set('Authorization', auth);
-            expect(response.statusCode).toBe(200);
-            expect(response.body.email).toBeDefined();
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(200);
+        expect(response.body.email).toBeDefined();
     });
 });
 
 describe('delete /users/:id', () => {
     test('Unauthorized user may not delete a user', async () => {
-        try {
-            const response = await request(app).delete('/api/users/123456');
-            expect(response.statusCode).toBe(401);
-            expect(response.body.message).toBe('Unauthorized');
-        } catch (e) {
-            console.log(e);
-        }
+        const response = await request(app).delete('/api/users/123456');
+
+        expect(response.statusCode).toBe(401);
+        expect(response.body.message).toBe('Unauthorized');
     });
 
     test('A user can delete a user', async () => {
         const id = process.env.USER_ID;
         const auth = process.env.AUTH;
+        const response = await request(app).delete(`/api/users/${id}`).set('Authorization', auth);
 
-        try {
-            const response = await request(app).delete(`/api/users/${id}`).set('Authorization', auth);
-            expect(response.statusCode).toBe(204);
-        } catch (e) {
-            console.log(e);
-        }
-    });
-});
-
-describe('post /auth/login', () => {
-    test('A user may not authenticate if fields are empty', async () => {
-        try {
-            const response = await request(app).post('/api/auth/login');
-            expect(response.statusCode).toBe(500);
-            expect(response.body.errors).toBeDefined();
-        } catch (e) {
-            console.log(e);
-        }
-    });
-
-    test('A user may not authenticate if email address is invalid', async () => {
-        const data = {
-            email: 'randomemail.com',
-            password: '123456',
-        };
-
-        try {
-            const response = await request(app).post('/api/auth/login').send(data);
-            expect(response.statusCode).toBe(500);
-            expect(response.body.errors[0].msg).toBe('Email is invalid');
-        } catch (e) {
-            console.log(e);
-        }
-    });
-
-    test('A user may not authenticate if credentials are invalid', async () => {
-        const data = {
-            email: 'random@email.com',
-            password: '123456',
-        };
-
-        try {
-            const response = await request(app).post('/api/auth/login').send(data);
-            expect(response.statusCode).toBe(401);
-            expect(response.body.message).toBe('Invalid Credentials');
-        } catch (e) {
-            console.log(e);
-        }
-    });
-
-    test('A user is successfully authenticated', async () => {
-        const data = {
-            email: process.env.USER_EMAIL,
-            password: 'secret',
-        };
-
-        try {
-            const response = await request(app).post('/api/auth/login').send(data);
-            expect(response.statusCode).toBe(200);
-            expect(response.body.message).toBe('You have successfully authenticated.');
-            expect(response.body.token).toBeDefined();
-        } catch (e) {
-            console.log(e);
-        }
+        expect(response.statusCode).toBe(204);
     });
 });
