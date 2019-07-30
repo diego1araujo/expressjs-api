@@ -73,8 +73,20 @@ module.exports = {
     },
 
     update: async (req, res) => {
+        const updateOps = {};
+
+        Object.entries(req.body).forEach((key, value) => {
+            updateOps[key] = value;
+        });
+
+        if (Object.keys(updateOps).length === 0) {
+            return res.status(500).send({
+                error: 'Fields cannot be empty',
+            });
+        }
+
         try {
-            await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
+            await Post.updateOne({ _id: req.params.id }, { $set: updateOps });
 
             return res.status(200).json({
                 message: 'Post updated successfully',
