@@ -4,11 +4,11 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const postSchema = mongoose.Schema({
     title: {
         type: String,
-        required: true,
+        required: [true, 'Title field is required'],
     },
     body: {
         type: String,
-        required: true,
+        required: [true, 'Body field is required'],
     },
     created_at: {
         type: Date,
