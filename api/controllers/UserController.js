@@ -67,23 +67,25 @@ module.exports = {
         }
 
         try {
-            const user = await User.find({ email });
+            const userExists = await User.find({ email });
 
-            if (user.length > 0) {
+            if (userExists.length > 0) {
                 return res.status(409).json({
                     message: 'Email already exists',
                 });
             }
 
-            const newUser = new User({
-                email,
-                password,
-            });
-
-            await newUser.save();
+            const user = await User.create(req.body);
 
             return res.status(201).json({
                 message: 'User created successfully',
+                data: {
+                    _id: user._id,
+                    email: user.email,
+                    request: {
+                        url: `/users/${user._id}`,
+                    },
+                },
             });
         } catch (error) {
             return res.status(500).json({
@@ -95,12 +97,6 @@ module.exports = {
     show: async (req, res) => {
         try {
             const user = await User.findById(req.params.id).select('_id email created_at');
-
-            if (!user) {
-                return res.status(404).json({
-                    message: 'No valid ID was found',
-                });
-            }
 
             return res.status(200).json(user);
         } catch (error) {
@@ -127,12 +123,10 @@ module.exports = {
 
         // Dummy some fake data
         for (let i = 0; i < 5; i += 1) {
-            const newUser = new User({
+            const saveUser = await User.create({
                 email: faker.internet.email().toLowerCase(),
                 password: 'secret',
             });
-
-            const saveUser = await newUser.save();
 
             fakeUsers.push(saveUser);
         }
@@ -141,7 +135,7 @@ module.exports = {
     },
 
     seed: async (req, res) => {
-        await usersController.generateSeed();
+        await module.exports.generateSeed();
 
         return res.status(200).json({
             message: 'User database seeded successfully',

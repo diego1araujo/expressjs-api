@@ -4,14 +4,16 @@ const Post = require('../models/Post');
 
 module.exports = {
     index: async (req, res) => {
-        try {
-            const options = {
-                select: '_id title created_at',
-                sort: { created_at: -1 },
-                page: parseInt(req.query.page ? req.query.page : 1, 10),
-                limit: parseInt(req.query.limit ? req.query.limit : 15, 10),
-            };
+        const { page = 1, limit = 10 } = req.query;
 
+        const options = {
+            select: '_id title created_at',
+            sort: { created_at: -1 },
+            page,
+            limit,
+        };
+
+        try {
             const posts = await Post.paginate({}, options);
 
             return res.status(200).json({
@@ -36,15 +38,8 @@ module.exports = {
     },
 
     store: async (req, res) => {
-        const { title, body } = req.body;
-
-        const newPost = new Post({
-            title,
-            body,
-        });
-
         try {
-            const post = await newPost.save();
+            const post = await Post.create(req.body);
 
             return res.status(201).json({
                 message: 'Post created successfully',
@@ -69,12 +64,6 @@ module.exports = {
         try {
             const post = await Post.findById(req.params.id);
 
-            if (!post) {
-                return res.status(404).json({
-                    message: 'No valid ID was found',
-                });
-            }
-
             return res.status(200).json(post);
         } catch (error) {
             return res.status(500).json({
@@ -84,20 +73,8 @@ module.exports = {
     },
 
     update: async (req, res) => {
-        const updateOps = {};
-
-        Object.entries(req.body).forEach((key, value) => {
-            updateOps[key] = value;
-        });
-
-        if (Object.keys(updateOps).length === 0) {
-            return res.status(500).json({
-                error: 'Fields cannot be empty',
-            });
-        }
-
         try {
-            await Post.updateOne({ _id: req.params.id }, { $set: updateOps });
+            await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
             return res.status(200).json({
                 message: 'Post updated successfully',
@@ -129,12 +106,10 @@ module.exports = {
 
         // Dummy some fake data
         for (let i = 0; i < 5; i += 1) {
-            const newPost = new Post({
+            const savePost = await Post.create({
                 title: faker.lorem.sentence(),
                 body: faker.lorem.sentences(),
             });
-
-            const savePost = await newPost.save();
 
             fakePosts.push(savePost);
         }
@@ -143,7 +118,7 @@ module.exports = {
     },
 
     seed: async (req, res) => {
-        await postsController.generateSeed();
+        await module.exports.generateSeed();
 
         return res.status(200).json({
             message: 'Post database seeded successfully',
