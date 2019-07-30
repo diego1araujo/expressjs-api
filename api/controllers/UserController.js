@@ -2,19 +2,21 @@ const faker = require('faker');
 
 const User = require('../models/User');
 
-const usersController = {
+module.exports = {
     index: async (req, res) => {
-        try {
-            const options = {
-                select: '_id email created_at',
-                sort: { created_at: -1 },
-                page: parseInt(req.query.page ? req.query.page : 1, 10),
-                limit: parseInt(req.query.limit ? req.query.limit : 15, 10),
-            };
+        const { page = 1, limit = 10 } = req.query;
 
+        const options = {
+            select: '_id email created_at',
+            sort: { created_at: -1 },
+            page,
+            limit,
+        };
+
+        try {
             const users = await User.paginate({}, options);
 
-            res.status(200).send({
+            return res.status(200).json({
                 total: users.totalDocs,
                 limit: users.limit,
                 page: users.page,
@@ -29,7 +31,7 @@ const usersController = {
                 })),
             });
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -59,7 +61,7 @@ const usersController = {
         const errors = req.validationErrors();
 
         if (errors) {
-            return res.status(500).send({
+            return res.status(500).json({
                 errors,
             });
         }
@@ -68,7 +70,7 @@ const usersController = {
             const user = await User.find({ email });
 
             if (user.length > 0) {
-                return res.status(409).send({
+                return res.status(409).json({
                     message: 'Email already exists',
                 });
             }
@@ -80,11 +82,11 @@ const usersController = {
 
             await newUser.save();
 
-            res.status(201).send({
+            return res.status(201).json({
                 message: 'User created successfully',
             });
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -95,14 +97,14 @@ const usersController = {
             const user = await User.findById(req.params.id).select('_id email created_at');
 
             if (!user) {
-                return res.status(404).send({
+                return res.status(404).json({
                     message: 'No valid ID was found',
                 });
             }
 
-            res.status(200).json(user);
+            return res.status(200).json(user);
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -112,9 +114,9 @@ const usersController = {
         try {
             await User.deleteOne({ _id: req.params.id });
 
-            res.status(204).send();
+            return res.status(204).send();
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -141,10 +143,8 @@ const usersController = {
     seed: async (req, res) => {
         await usersController.generateSeed();
 
-        res.status(200).send({
+        return res.status(200).json({
             message: 'User database seeded successfully',
         });
     },
 };
-
-module.exports = usersController;

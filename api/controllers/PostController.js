@@ -2,7 +2,7 @@ const faker = require('faker');
 
 const Post = require('../models/Post');
 
-const postsController = {
+module.exports = {
     index: async (req, res) => {
         try {
             const options = {
@@ -14,7 +14,7 @@ const postsController = {
 
             const posts = await Post.paginate({}, options);
 
-            res.status(200).send({
+            return res.status(200).json({
                 total: posts.totalDocs,
                 limit: posts.limit,
                 page: posts.page,
@@ -29,7 +29,7 @@ const postsController = {
                 })),
             });
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -46,7 +46,7 @@ const postsController = {
         try {
             const post = await newPost.save();
 
-            res.status(201).send({
+            return res.status(201).json({
                 message: 'Post created successfully',
                 data: {
                     _id: post._id,
@@ -59,7 +59,7 @@ const postsController = {
                 },
             });
         } catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 error,
             });
         }
@@ -70,14 +70,14 @@ const postsController = {
             const post = await Post.findById(req.params.id);
 
             if (!post) {
-                return res.status(404).send({
+                return res.status(404).json({
                     message: 'No valid ID was found',
                 });
             }
 
-            res.status(200).json(post);
+            return res.status(200).json(post);
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -91,7 +91,7 @@ const postsController = {
         });
 
         if (Object.keys(updateOps).length === 0) {
-            return res.status(500).send({
+            return res.status(500).json({
                 error: 'Fields cannot be empty',
             });
         }
@@ -99,14 +99,14 @@ const postsController = {
         try {
             await Post.updateOne({ _id: req.params.id }, { $set: updateOps });
 
-            res.status(200).send({
+            return res.status(200).json({
                 message: 'Post updated successfully',
                 request: {
                     url: `/posts/${req.params.id}`,
                 },
             });
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -116,9 +116,9 @@ const postsController = {
         try {
             await Post.deleteOne({ _id: req.params.id });
 
-            res.status(204).send();
+            return res.status(204).send();
         } catch (error) {
-            res.status(500).send({
+            return res.status(500).json({
                 error,
             });
         }
@@ -145,10 +145,8 @@ const postsController = {
     seed: async (req, res) => {
         await postsController.generateSeed();
 
-        res.status(200).send({
+        return res.status(200).json({
             message: 'Post database seeded successfully',
         });
     },
 };
-
-module.exports = postsController;

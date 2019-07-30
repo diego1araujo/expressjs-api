@@ -5,14 +5,14 @@ const app = require('../app');
 
 const Post = require('../api/models/Post');
 
-const postsController = require('../api/controllers/posts');
+const PostController = require('../api/controllers/PostController');
 
 beforeAll(async () => {
     // Clean all posts documents
     await Post.deleteMany({}).exec();
 
     // Dummy some fake data
-    const fakePosts = await postsController.generateSeed();
+    const fakePosts = await PostController.generateSeed();
 
     // Get random fake post and assign it to env var
     process.env.POST_ID = fakePosts[0]._id;

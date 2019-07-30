@@ -5,14 +5,14 @@ const app = require('../app');
 
 const User = require('../api/models/User');
 
-const usersController = require('../api/controllers/users');
+const UserController = require('../api/controllers/UserController');
 
 beforeAll(async () => {
     // Clean all users documents
     await User.deleteMany({}).exec();
 
     // Dummy some fake data
-    const fakeUsers = await usersController.generateSeed();
+    const fakeUsers = await UserController.generateSeed();
 
     // Get random fake user ID and assign it to an env var
     process.env.USER_ID = fakeUsers[0]._id;
