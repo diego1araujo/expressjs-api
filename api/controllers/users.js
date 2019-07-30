@@ -1,6 +1,6 @@
 const faker = require('faker');
 
-const User = require('../models/user');
+const User = require('../models/User');
 
 const usersController = {
     index: async (req, res) => {

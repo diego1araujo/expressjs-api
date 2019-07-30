@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const app = require('../app');
 
-const Post = require('../api/models/post');
+const Post = require('../api/models/Post');
 
 const postsController = require('../api/controllers/posts');
 

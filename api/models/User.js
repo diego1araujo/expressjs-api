@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const bcrypt = require('bcryptjs');
 
-const userSchema = mongoose.Schema({
+const UserSchema = mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Email field is required'],
@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
     },
 });
 
-userSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
     }
@@ -37,6 +37,6 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-userSchema.plugin(mongoosePaginate);
+UserSchema.plugin(mongoosePaginate);
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);

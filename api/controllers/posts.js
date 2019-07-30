@@ -1,6 +1,6 @@
 const faker = require('faker');
 
-const Post = require('../models/post');
+const Post = require('../models/Post');
 
 const postsController = {
     index: async (req, res) => {
