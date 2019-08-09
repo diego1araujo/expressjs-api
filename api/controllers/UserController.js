@@ -7,8 +7,8 @@ module.exports = {
         const { page = 1, limit = 10 } = req.query;
 
         const options = {
-            select: '_id email created_at',
-            sort: { created_at: -1 },
+            select: '_id email createdAt',
+            sort: { createdAt: -1 },
             page,
             limit,
         };
@@ -24,7 +24,7 @@ module.exports = {
                 data: users.docs.map(user => ({
                     _id: user._id,
                     email: user.email,
-                    created_at: user.created_at,
+                    createdAt: user.createdAt,
                     request: {
                         url: `/users/${user._id}`,
                     },
@@ -96,7 +96,7 @@ module.exports = {
 
     show: async (req, res) => {
         try {
-            const user = await User.findById(req.params.id).select('_id email created_at');
+            const user = await User.findById(req.params.id).select('_id email createdAt');
 
             return res.status(200).json(user);
         } catch (error) {

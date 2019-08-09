@@ -7,8 +7,8 @@ module.exports = {
         const { page = 1, limit = 10 } = req.query;
 
         const options = {
-            select: '_id title created_at',
-            sort: { created_at: -1 },
+            select: '_id title createdAt',
+            sort: { createdAt: -1 },
             page,
             limit,
         };
@@ -24,7 +24,7 @@ module.exports = {
                 data: posts.docs.map(post => ({
                     _id: post._id,
                     title: post.title,
-                    created_at: post.created_at,
+                    createdAt: post.createdAt,
                     request: {
                         url: `/posts/${post._id}`,
                     },
@@ -47,7 +47,7 @@ module.exports = {
                     _id: post._id,
                     title: post.title,
                     body: post.body,
-                    created_at: post.created_at,
+                    createdAt: post.createdAt,
                     request: {
                         url: `/posts/${post._id}`,
                     },

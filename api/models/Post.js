@@ -10,10 +10,8 @@ const PostSchema = mongoose.Schema({
         type: String,
         required: [true, 'Body field is required'],
     },
-    created_at: {
-        type: Date,
-        default: Date.now,
-    },
+}, {
+    timestamps: true,
 });
 
 PostSchema.plugin(mongoosePaginate);

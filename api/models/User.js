@@ -15,10 +15,8 @@ const UserSchema = mongoose.Schema({
         minlength: [5, 'Password field needs at least 5 characters'],
         maxlength: [16, 'Password field cannot be higher than 16 characters'],
     },
-    created_at: {
-        type: Date,
-        default: Date.now,
-    },
+}, {
+    timestamps: true,
 });
 
 UserSchema.pre('save', async function (next) {
