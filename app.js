@@ -6,7 +6,7 @@ const validator = require('express-validator');
 const app = express();
 
 // Database
-require('./database');
+require('./api/database');
 
 if (process.env.NODE_ENV === 'dev') app.use(morgan('dev'));
 app.use(express.json());
@@ -17,6 +17,6 @@ app.use(validator());
 app.use('/api', require('./api/routes/'));
 
 // Errors
-require('./errors');
+require('./api/errors');
 
 module.exports = app;
