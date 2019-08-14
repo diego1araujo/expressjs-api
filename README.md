@@ -3,13 +3,14 @@
 ### Includes:
 
 - [x] Express.js
+- [x] Express Validator
 - [x] Mongoose
-- [x] Body Parser
+- [x] Mongoose Paginate v2
 - [x] Morgan
 - [x] Cors
 - [x] Dotenv
-- [x] Bcrypt
+- [x] Bcryptjs
 - [x] JWT
-- [x] Faker
+- [x] Factory Girl
 - [x] Jest
 - [x] Supertest

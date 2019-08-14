@@ -63,6 +63,7 @@ describe('post /posts', () => {
             title: 'Example 01',
             body: 'A body text example',
         };
+
         const response = await request(app).post('/api/posts').set('Authorization', auth).send(data);
 
         expect(response.statusCode).toBe(201);
@@ -104,10 +105,11 @@ describe('patch /posts/:id', () => {
         expect(response.body.error).toBeDefined();
     });
 
-    test('A user is successfully updated when all data is correct', async () => {
+    test('A post is successfully updated when all data is correct', async () => {
         const data = {
             title: 'Title 01',
         };
+
         const response = await request(app).patch(`/api/posts/${postID}`).set('Authorization', auth).send(data);
 
         expect(response.statusCode).toBe(200);

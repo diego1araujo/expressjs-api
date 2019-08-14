@@ -38,6 +38,7 @@ describe('post /auth/login', () => {
             email: 'randomemail.com',
             password: '123456',
         };
+
         const response = await request(app).post('/api/auth/login').send(data);
 
         expect(response.statusCode).toBe(500);
@@ -49,6 +50,7 @@ describe('post /auth/login', () => {
             email: 'random@email.com',
             password: '123456',
         };
+
         const response = await request(app).post('/api/auth/login').send(data);
 
         expect(response.statusCode).toBe(401);
@@ -60,6 +62,7 @@ describe('post /auth/login', () => {
             email: userEmail,
             password: 'secret',
         };
+
         const response = await request(app).post('/api/auth/login').send(data);
 
         expect(response.statusCode).toBe(200);

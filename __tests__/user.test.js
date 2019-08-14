@@ -59,6 +59,7 @@ describe('post /users', () => {
             password: '123456',
             password_confirmation: '123456',
         };
+
         const response = await request(app).post('/api/users').send(data);
 
         expect(response.statusCode).toBe(500);
@@ -70,6 +71,7 @@ describe('post /users', () => {
             email: 'user@email.com',
             password: '123456',
         };
+
         const response = await request(app).post('/api/users').send(data);
 
         expect(response.statusCode).toBe(500);
@@ -82,6 +84,7 @@ describe('post /users', () => {
             password: '123456',
             password_confirmation: '123',
         };
+
         const response = await request(app).post('/api/users').send(data);
 
         expect(response.statusCode).toBe(500);
@@ -94,6 +97,7 @@ describe('post /users', () => {
             password: '123456',
             password_confirmation: '123456',
         };
+
         const response = await request(app).post('/api/users').send(data);
 
         expect(response.statusCode).toBe(201);
@@ -106,6 +110,7 @@ describe('post /users', () => {
             password: '123456',
             password_confirmation: '123456',
         };
+
         const response = await request(app).post('/api/users').send(data);
 
         expect(response.statusCode).toBe(409);
