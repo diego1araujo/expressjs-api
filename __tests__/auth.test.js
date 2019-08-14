@@ -1,30 +1,22 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+
 const app = require('../app');
 
 const User = require('../api/models/User');
+const UserFactory = require('../api/factories/PostFactory');
 
-const UserController = require('../api/controllers/UserController');
+let userEmail;
 
 beforeAll(async () => {
     // Clean all users documents
     await User.deleteMany({}).exec();
 
     // Dummy some fake data
-    const fakeUsers = await UserController.generateSeed();
+    const fakeUsers = await UserFactory.createMany('User', 5);
 
-    // Get random fake user ID and assign it to an env var
-    process.env.USER_ID = fakeUsers[0]._id;
-
-    // Get random fake user EMAIL and assign it to an env var
-    process.env.USER_EMAIL = fakeUsers[1].email;
-
-    // Generate a token
-    const token = await jwt.sign({ id: 1 }, process.env.JWT_KEY, { expiresIn: '5h' });
-
-    // Get the token and assign it to an env var
-    process.env.AUTH = `Bearer ${token}`;
+    // Get random Email from a User
+    userEmail = fakeUsers[1].email;
 });
 
 afterAll(async () => {
@@ -65,7 +57,7 @@ describe('post /auth/login', () => {
 
     test('A user is successfully authenticated', async () => {
         const data = {
-            email: process.env.USER_EMAIL,
+            email: userEmail,
             password: 'secret',
         };
         const response = await request(app).post('/api/auth/login').send(data);

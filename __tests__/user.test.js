@@ -1,30 +1,30 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+
 const app = require('../app');
+const utils = require('../api/utils');
 
 const User = require('../api/models/User');
+const UserFactory = require('../api/factories/UserFactory');
 
-const UserController = require('../api/controllers/UserController');
+let userID;
+let auth;
 
 beforeAll(async () => {
     // Clean all users documents
     await User.deleteMany({}).exec();
 
     // Dummy some fake data
-    const fakeUsers = await UserController.generateSeed();
+    const fakeUsers = await UserFactory.createMany('User', 5);
 
-    // Get random fake user ID and assign it to an env var
-    process.env.USER_ID = fakeUsers[0]._id;
-
-    // Get random fake user EMAIL and assign it to an env var
-    process.env.USER_EMAIL = fakeUsers[1].email;
+    // Get random ID from a User
+    userID = fakeUsers[0]._id;
 
     // Generate a token
-    const token = await jwt.sign({ id: 1 }, process.env.JWT_KEY, { expiresIn: '5h' });
+    const token = await utils.generateToken({ id: 1 });
 
-    // Get the token and assign it to an env var
-    process.env.AUTH = `Bearer ${token}`;
+    // Get the token
+    auth = `Bearer ${token}`;
 });
 
 afterAll(async () => {
@@ -122,7 +122,6 @@ describe('get /users/:id', () => {
     });
 
     test('A user may not see a user if provided ID is invalid', async () => {
-        const auth = process.env.AUTH;
         const response = await request(app).get('/api/users/123456').set('Authorization', auth);
 
         expect(response.statusCode).toBe(500);
@@ -130,9 +129,7 @@ describe('get /users/:id', () => {
     });
 
     test('A user can see a user', async () => {
-        const id = process.env.USER_ID;
-        const auth = process.env.AUTH;
-        const response = await request(app).get(`/api/users/${id}`).set('Authorization', auth);
+        const response = await request(app).get(`/api/users/${userID}`).set('Authorization', auth);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.email).toBeDefined();
@@ -148,9 +145,7 @@ describe('delete /users/:id', () => {
     });
 
     test('A user can delete a user', async () => {
-        const id = process.env.USER_ID;
-        const auth = process.env.AUTH;
-        const response = await request(app).delete(`/api/users/${id}`).set('Authorization', auth);
+        const response = await request(app).delete(`/api/users/${userID}`).set('Authorization', auth);
 
         expect(response.statusCode).toBe(204);
     });

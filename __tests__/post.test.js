@@ -1,27 +1,30 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+
 const app = require('../app');
+const utils = require('../api/utils');
 
 const Post = require('../api/models/Post');
+const PostFactory = require('../api/factories/PostFactory');
 
-const PostController = require('../api/controllers/PostController');
+let postID;
+let auth;
 
 beforeAll(async () => {
     // Clean all posts documents
     await Post.deleteMany({}).exec();
 
     // Dummy some fake data
-    const fakePosts = await PostController.generateSeed();
+    const fakePosts = await PostFactory.createMany('Post', 5);
 
-    // Get random fake post and assign it to env var
-    process.env.POST_ID = fakePosts[0]._id;
+    // Get random ID from a Post
+    postID = fakePosts[0]._id;
 
     // Generate a token
-    const token = await jwt.sign({ id: 1 }, process.env.JWT_KEY, { expiresIn: '5h' });
+    const token = await utils.generateToken({ id: 1 });
 
-    // Get the token and assign it to an env var
-    process.env.AUTH = `Bearer ${token}`;
+    // Get the token
+    auth = `Bearer ${token}`;
 });
 
 afterAll(async () => {
@@ -49,7 +52,6 @@ describe('post /posts', () => {
     });
 
     test('A post may not be created if fields are empty', async () => {
-        const auth = process.env.AUTH;
         const response = await request(app).post('/api/posts').set('Authorization', auth);
 
         expect(response.statusCode).toBe(500);
@@ -57,7 +59,6 @@ describe('post /posts', () => {
     });
 
     test('A post is successfully created when all data is correct', async () => {
-        const auth = process.env.AUTH;
         const data = {
             title: 'Example 01',
             body: 'A body text example',
@@ -80,8 +81,7 @@ describe('get /posts/:id', () => {
     });
 
     test('A user can see a post', async () => {
-        const id = process.env.POST_ID;
-        const response = await request(app).get(`/api/posts/${id}`);
+        const response = await request(app).get(`/api/posts/${postID}`);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.title).toBeDefined();
@@ -98,21 +98,17 @@ describe('patch /posts/:id', () => {
     });
 
     test('A post may not be updated if fields are empty', async () => {
-        const id = process.env.POST_ID;
-        const auth = process.env.AUTH;
-        const response = await request(app).patch(`/api/posts/${id}`).set('Authorization', auth);
+        const response = await request(app).patch(`/api/posts/${postID}`).set('Authorization', auth);
 
         expect(response.statusCode).toBe(500);
         expect(response.body.error).toBeDefined();
     });
 
     test('A user is successfully updated when all data is correct', async () => {
-        const id = process.env.POST_ID;
-        const auth = process.env.AUTH;
         const data = {
             title: 'Title 01',
         };
-        const response = await request(app).patch(`/api/posts/${id}`).set('Authorization', auth).send(data);
+        const response = await request(app).patch(`/api/posts/${postID}`).set('Authorization', auth).send(data);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toBe('Post updated successfully');
@@ -128,9 +124,7 @@ describe('delete /posts/:id', () => {
     });
 
     test('A user can delete a post', async () => {
-        const id = process.env.POST_ID;
-        const auth = process.env.AUTH;
-        const response = await request(app).delete(`/api/posts/${id}`).set('Authorization', auth);
+        const response = await request(app).delete(`/api/posts/${postID}`).set('Authorization', auth);
 
         expect(response.statusCode).toBe(204);
     });

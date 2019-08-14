@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
+const utils = require('../utils');
 const User = require('../models/User');
 
 module.exports = {
@@ -42,7 +42,7 @@ module.exports = {
                     email: user[0].email,
                 };
 
-                const token = await jwt.sign({ data }, process.env.JWT_KEY, { expiresIn: '5h' });
+                const token = await utils.generateToken({ data });
 
                 return res.status(200).json({
                     message: 'You have successfully authenticated.',

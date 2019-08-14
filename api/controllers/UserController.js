@@ -1,6 +1,5 @@
-const faker = require('faker');
-
 const User = require('../models/User');
+const UserFactory = require('../factories/UserFactory');
 
 module.exports = {
     index: async (req, res) => {
@@ -118,24 +117,8 @@ module.exports = {
         }
     },
 
-    generateSeed: async () => {
-        const fakeUsers = [];
-
-        // Dummy some fake data
-        for (let i = 0; i < 5; i += 1) {
-            const saveUser = await User.create({
-                email: faker.internet.email().toLowerCase(),
-                password: 'secret',
-            });
-
-            fakeUsers.push(saveUser);
-        }
-
-        return fakeUsers;
-    },
-
     seed: async (req, res) => {
-        await module.exports.generateSeed();
+        await UserFactory.createMany('User', 10);
 
         return res.status(200).json({
             message: 'User database seeded successfully',

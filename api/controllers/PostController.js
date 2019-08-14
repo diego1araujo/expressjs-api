@@ -1,6 +1,5 @@
-const faker = require('faker');
-
 const Post = require('../models/Post');
+const PostFactory = require('../factories/PostFactory');
 
 module.exports = {
     index: async (req, res) => {
@@ -113,24 +112,8 @@ module.exports = {
         }
     },
 
-    generateSeed: async () => {
-        const fakePosts = [];
-
-        // Dummy some fake data
-        for (let i = 0; i < 5; i += 1) {
-            const savePost = await Post.create({
-                title: faker.lorem.sentence(),
-                body: faker.lorem.sentences(),
-            });
-
-            fakePosts.push(savePost);
-        }
-
-        return fakePosts;
-    },
-
     seed: async (req, res) => {
-        await module.exports.generateSeed();
+        await PostFactory.createMany('Post', 10);
 
         return res.status(200).json({
             message: 'Post database seeded successfully',
