@@ -52,11 +52,27 @@ describe('POST /posts', () => {
         expect(response.body.message).toBe('Unauthorized');
     });
 
-    test('A post may not be created if fields are empty', async () => {
+    test('A post may not be created if fields are undefined', async () => {
         const response = await request(app).post('/api/posts').set('Authorization', auth);
 
         expect(response.statusCode).toBe(500);
         expect(response.body.error.errors).toBeDefined();
+        expect(response.body.error.errors.title.message).toBe('Title field is required');
+        expect(response.body.error.errors.body.message).toBe('Body field is required');
+    });
+
+    test('A post may not be created if fields are empty', async () => {
+        const data = {
+            title: '',
+            body: '',
+        };
+
+        const response = await request(app).post('/api/posts').set('Authorization', auth).send(data);
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body.error.errors).toBeDefined();
+        expect(response.body.error.errors.title.message).toBe('Title field is required');
+        expect(response.body.error.errors.body.message).toBe('Body field is required');
     });
 
     test('A post is successfully created when all data is correct', async () => {

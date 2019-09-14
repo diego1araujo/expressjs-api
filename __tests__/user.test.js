@@ -45,13 +45,27 @@ describe('GET /users', () => {
 });
 
 describe('POST /users', () => {
-    test('A user may not be created if fields are empty', async () => {
+    test('A user may not be created if fields are undefined', async () => {
         const response = await request(app).post('/api/users');
 
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBe(422);
         expect(response.body.errors).toBeDefined();
         expect(response.body.errors[0].msg).toBe('Email is required');
-        expect(response.body.errors[2].msg).toBe('Password is required');
+        expect(response.body.errors[3].msg).toBe('Password is required');
+    });
+
+    test('A user may not be created if fields are empty', async () => {
+        const data = {
+            email: '',
+            password: '',
+        };
+
+        const response = await request(app).post('/api/users').send(data);
+
+        expect(response.statusCode).toBe(422);
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors[0].msg).toBe('Email is empty');
+        expect(response.body.errors[2].msg).toBe('Password is empty');
     });
 
     test('A user may not be created if email address is invalid', async () => {
@@ -63,7 +77,7 @@ describe('POST /users', () => {
 
         const response = await request(app).post('/api/users').send(data);
 
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBe(422);
         expect(response.body.errors[0].msg).toBe('Email is invalid');
     });
 
@@ -75,8 +89,8 @@ describe('POST /users', () => {
 
         const response = await request(app).post('/api/users').send(data);
 
-        expect(response.statusCode).toBe(500);
-        expect(response.body.errors[1].msg).toBe('Password Confirmation is required');
+        expect(response.statusCode).toBe(422);
+        expect(response.body.errors[0].msg).toBe('Password Confirmation is required');
     });
 
     test('A user may not be created if passwords are not equals', async () => {
@@ -88,7 +102,7 @@ describe('POST /users', () => {
 
         const response = await request(app).post('/api/users').send(data);
 
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBe(422);
         expect(response.body.errors[0].msg).toBe('Passwords must match');
     });
 

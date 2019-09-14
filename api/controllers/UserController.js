@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator');
+
 const User = require('../models/User');
 const UserFactory = require('../factories/UserFactory');
 
@@ -37,31 +39,13 @@ module.exports = {
     },
 
     store: async (req, res) => {
-        const { email, password, password_confirmation } = req.body;
+        const { email } = req.body;
 
-        req.checkBody('email')
-            .notEmpty()
-            .withMessage('Email is required')
-            .isEmail()
-            .withMessage('Email is invalid');
+        const errors = validationResult(req);
 
-        req.checkBody('password')
-            .notEmpty()
-            .withMessage('Password is required')
-            .isLength({ min: 5 })
-            .withMessage('Password requires at least 5 characters')
-            .equals(password_confirmation)
-            .withMessage('Passwords must match');
-
-        req.checkBody('password_confirmation')
-            .notEmpty()
-            .withMessage('Password Confirmation is required');
-
-        const errors = req.validationErrors();
-
-        if (errors) {
-            return res.status(500).json({
-                errors,
+        if (! errors.isEmpty()) {
+            return res.status(422).json({
+                errors: errors.array(),
             });
         }
 

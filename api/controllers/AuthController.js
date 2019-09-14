@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 
 const utils = require('../utils');
 const User = require('../models/User');
@@ -7,21 +8,11 @@ module.exports = {
     login: async (req, res) => {
         const { email, password } = req.body;
 
-        req.checkBody('email')
-            .notEmpty()
-            .withMessage('Email is required')
-            .isEmail()
-            .withMessage('Email is invalid');
+        const errors = validationResult(req);
 
-        req.checkBody('password')
-            .notEmpty()
-            .withMessage('Password is required');
-
-        const errors = req.validationErrors();
-
-        if (errors) {
-            return res.status(500).json({
-                errors,
+        if (! errors.isEmpty()) {
+            return res.status(422).json({
+                errors: errors.array(),
             });
         }
 

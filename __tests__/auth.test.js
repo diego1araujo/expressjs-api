@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const app = require('../app');
 
 const User = require('../api/models/User');
-const UserFactory = require('../api/factories/PostFactory');
+const UserFactory = require('../api/factories/UserFactory');
 
 let userEmail;
 
@@ -27,10 +27,10 @@ describe('POST /auth/login', () => {
     test('A user may not authenticate if fields are empty', async () => {
         const response = await request(app).post('/api/auth/login');
 
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBe(422);
         expect(response.body.errors).toBeDefined();
         expect(response.body.errors[0].msg).toBe('Email is required');
-        expect(response.body.errors[2].msg).toBe('Password is required');
+        expect(response.body.errors[3].msg).toBe('Password is required');
     });
 
     test('A user may not authenticate if email address is invalid', async () => {
@@ -41,7 +41,7 @@ describe('POST /auth/login', () => {
 
         const response = await request(app).post('/api/auth/login').send(data);
 
-        expect(response.statusCode).toBe(500);
+        expect(response.statusCode).toBe(422);
         expect(response.body.errors[0].msg).toBe('Email is invalid');
     });
 
