@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const PostSchema = mongoose.Schema({
+const postSchema = mongoose.Schema({
     title: {
         type: String,
         required: [true, 'Title field is required'],
@@ -14,6 +14,6 @@ const PostSchema = mongoose.Schema({
     timestamps: true,
 });
 
-PostSchema.plugin(mongoosePaginate);
+postSchema.plugin(mongoosePaginate);
 
-module.exports = mongoose.model('Post', PostSchema);
+module.exports = mongoose.model('Post', postSchema);
