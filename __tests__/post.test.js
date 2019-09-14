@@ -31,19 +31,20 @@ afterAll(async () => {
     await mongoose.disconnect();
 });
 
-describe('get /posts', () => {
+describe('GET /posts', () => {
     test('A user can view all posts', async () => {
         const response = await request(app).get('/api/posts');
 
         expect(response.statusCode).toBe(200);
         expect(response.body.total).toEqual(5);
         expect(response.body.data).toBeDefined();
+        expect(response.body.data).toHaveLength(5);
         expect(response.body.data[0]).toHaveProperty('_id');
         expect(response.body.data[0]).toHaveProperty('title');
     });
 });
 
-describe('post /posts', () => {
+describe('POST /posts', () => {
     test('Unauthorized user may not create a post', async () => {
         const response = await request(app).post('/api/posts');
 
@@ -73,7 +74,7 @@ describe('post /posts', () => {
     });
 });
 
-describe('get /posts/:id', () => {
+describe('GET /posts/:id', () => {
     test('A user may not see a post if provided ID is invalid', async () => {
         const response = await request(app).get('/api/posts/123456');
 
@@ -90,7 +91,7 @@ describe('get /posts/:id', () => {
     });
 });
 
-describe('patch /posts/:id', () => {
+describe('PATCH /posts/:id', () => {
     test('Unauthorized user may not update a post', async () => {
         const response = await request(app).patch('/api/posts/123456');
 
@@ -117,7 +118,7 @@ describe('patch /posts/:id', () => {
     });
 });
 
-describe('delete /posts/:id', () => {
+describe('DELETE /posts/:id', () => {
     test('Unauthorized user may not delete a post', async () => {
         const response = await request(app).delete('/api/posts/123456');
 

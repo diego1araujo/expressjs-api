@@ -31,19 +31,20 @@ afterAll(async () => {
     await mongoose.disconnect();
 });
 
-describe('get /users', () => {
+describe('GET /users', () => {
     test('A user can view all users', async () => {
         const response = await request(app).get('/api/users');
 
         expect(response.statusCode).toBe(200);
         expect(response.body.total).toEqual(10);
         expect(response.body.data).toBeDefined();
+        expect(response.body.data).toHaveLength(10);
         expect(response.body.data[0]).toHaveProperty('_id');
         expect(response.body.data[0]).toHaveProperty('email');
     });
 });
 
-describe('post /users', () => {
+describe('POST /users', () => {
     test('A user may not be created if fields are empty', async () => {
         const response = await request(app).post('/api/users');
 
@@ -118,7 +119,7 @@ describe('post /users', () => {
     });
 });
 
-describe('get /users/:id', () => {
+describe('GET /users/:id', () => {
     test('Unauthorized user may not see a user', async () => {
         const response = await request(app).get('/api/users/123456');
 
@@ -141,7 +142,7 @@ describe('get /users/:id', () => {
     });
 });
 
-describe('delete /users/:id', () => {
+describe('DELETE /users/:id', () => {
     test('Unauthorized user may not delete a user', async () => {
         const response = await request(app).delete('/api/users/123456');
 

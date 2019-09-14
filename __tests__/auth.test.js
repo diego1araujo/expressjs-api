@@ -23,7 +23,7 @@ afterAll(async () => {
     await mongoose.disconnect();
 });
 
-describe('post /auth/login', () => {
+describe('POST /auth/login', () => {
     test('A user may not authenticate if fields are empty', async () => {
         const response = await request(app).post('/api/auth/login');
 
